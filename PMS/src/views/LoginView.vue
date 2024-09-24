@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { useUsers } from '../modules/useUsers'
 
-const { user, login, logout } = user()
+const { user, login, logout } = useUsers()
 </script>
 
 <template>
