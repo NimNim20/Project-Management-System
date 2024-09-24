@@ -1,20 +1,133 @@
 <script setup>
-// import { ref } from 'vue'
+import { ref } from 'vue'
 import { useUsers } from '../modules/useUsers'
 
-const { user, login, logout } = useUsers()
+const { user, login } = useUsers()
+
+const email = ref('')
+const password = ref('')
+
+const handleLogin = () => {
+  login(email.value, password.value)
+}
 </script>
 
 <template>
-  <div>
-    <div>
-      <button v-if="!user" @click="login('admin@admin.com', 'admin1')">Log in</button>
-      <button v-if="user" @click="logout">Log out</button>
-      <p v-if="user">Logged in as: {{ user.email }}</p>
+  <div class="login-container" v-if="!user">
+    <div class="login-box">
+      <h2>Login</h2>
+      <form @submit.prevent="handleLogin">
+        <div class="input-group">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            v-model="email"
+            placeholder="Enter your email"
+            required
+          />
+        </div>
+        <div class="input-group">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            v-model="password"
+            placeholder="Enter your password"
+            required
+          />
+        </div>
+        <button type="submit" class="login-btn">Log In</button>
+      </form>
     </div>
+  </div>
+
+  <div v-else>
+    <p>Logged in as: {{ user.email }}</p>
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style scoped>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Arial', sans-serif;
+}
 
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f0f2f5;
+}
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+}
+
+.login-box {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.input-group {
+  margin-bottom: 1.2rem;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 0.9rem;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.login-btn {
+  width: 100%;
+  padding: 0.8rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.login-btn:hover {
+  background-color: #0056b3;
+}
+
+@media (max-width: 480px) {
+  .login-box {
+    padding: 1.5rem;
+  }
+}
 </style>
