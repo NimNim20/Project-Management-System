@@ -1,0 +1,17 @@
+<template>
+  <div>
+    <div>
+      <button v-if="!user" @click="login('admin@admin.com', 'admin1')">Log in</button>
+      <button v-if="user" @click="logout">Log out</button>
+      <p v-if="user">Logged in as: {{ user.email }}</p>
+    </div>
+  </div>
+</template>
+
+<script setup>
+
+</script>
+
+<style lang="scss" scoped>
+
+</style>
