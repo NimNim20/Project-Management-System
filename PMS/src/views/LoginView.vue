@@ -1,3 +1,10 @@
+<script setup>
+import { ref } from 'vue'
+import { useUsers } from '../modules/useUsers'
+
+const { user, login, logout } = user()
+</script>
+
 <template>
   <div>
     <div>
@@ -7,10 +14,6 @@
     </div>
   </div>
 </template>
-
-<script setup>
-
-</script>
 
 <style lang="scss" scoped>
 
