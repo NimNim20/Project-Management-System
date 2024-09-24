@@ -1,12 +1,28 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 
+// import { ref } from 'vue'
+import { useUsers } from './modules/useUsers'
+
+const { user, login, logout } = useUsers()
+
 </script>
 
 <template>
   <header>
 
     <div class="wrapper">
+
+<template>
+  <div>
+    <div>
+      <button v-if="!user" @click="login('admin@admin.com', 'admin1')">Log in</button>
+      <button v-if="user" @click="logout">Log out</button>
+      <p v-if="user">Logged in as: {{ user.email }}</p>
+    </div>
+  </div>
+</template>
+
       
       <nav>
         <RouterLink to="/">Home</RouterLink>
