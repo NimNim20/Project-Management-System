@@ -1,8 +1,9 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterView } from 'vue-router'
 
 // import { ref } from 'vue'
 import { useUsers } from './modules/useUsers'
+
 
 const { user, login, logout } = useUsers()
 
@@ -12,6 +13,7 @@ const { user, login, logout } = useUsers()
   <header>
 
     <div class="wrapper">
+    
 
 <template>
   <div>
@@ -22,13 +24,6 @@ const { user, login, logout } = useUsers()
     </div>
   </div>
 </template>
-
-      
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-        <RouterLink to="/login">Login</RouterLink>
-      </nav>
     </div>
   </header>
 

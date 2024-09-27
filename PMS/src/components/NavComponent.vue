@@ -9,9 +9,16 @@
 </template>
 
 <script setup>
+import { RouterLink } from 'vue-router'
 
 </script>
 
 <style lang="scss" scoped>
+nav {
+  display: flex;
+  // justify-content: center;
+  margin: 2rem 0;
+  position: sticky;
+}
 
 </style>
