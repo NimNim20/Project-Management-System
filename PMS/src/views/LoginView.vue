@@ -2,17 +2,20 @@
 import { ref } from 'vue'
 import { useUsers } from '../modules/useUsers'
 
-const { user, login } = useUsers()
+// Use the useUsers composable to access login, user, and error states
+const { user, login, error } = useUsers()
 
 const email = ref('')
 const password = ref('')
 
+// Function to handle form submission
 const handleLogin = () => {
   login(email.value, password.value)
 }
 </script>
 
 <template>
+  <!-- Show login form if the user is not logged in -->
   <div class="login-container" v-if="!user">
     <div class="login-box">
       <h2>Login</h2>
@@ -37,11 +40,16 @@ const handleLogin = () => {
             required
           />
         </div>
+
+        <!-- Display error message if there's an error -->
+        <p v-if="error" class="error-message">{{ error }}</p>
+
         <button type="submit" class="login-btn">Log In</button>
       </form>
     </div>
   </div>
 
+  <!-- Show logged-in user information if the user is logged in -->
   <div v-else>
     <p>Logged in as: {{ user.email }}</p>
   </div>
@@ -123,6 +131,13 @@ h2 {
 
 .login-btn:hover {
   background-color: #0056b3;
+}
+
+/* Style for the error message */
+.error-message {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
 }
 
 @media (max-width: 480px) {
