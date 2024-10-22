@@ -35,14 +35,9 @@ const handleSelectProject = (projectId) => {
 <template>
   <div class="app-container">
     <header>
-      <div class="wrapper">
-        <div>
-          <!-- Conditional login/logout buttons -->
-          <button v-if="!user" @click="handleLogin">Log in</button>
-          <button v-if="user" @click="handleLogout">Log out</button>
-          <p v-if="user">Logged in as: {{ user.email }}</p>
-        </div>
-      </div>
+
+      <button @click="handleLogin">Login</button>
+      <button @click="handleLogout">Logout</button>
     </header>
 
     <!-- Main Content: Show project management only if logged in -->
@@ -136,5 +131,9 @@ button[disabled] {
 p {
   margin-top: 1rem;
   font-size: 1.2rem;
+}
+
+.project-list li[data-v-45544ce3] {
+  background-color: black;
 }
 </style>
