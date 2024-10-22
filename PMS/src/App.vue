@@ -137,4 +137,8 @@ p {
   margin-top: 1rem;
   font-size: 1.2rem;
 }
+
+.project-list ul {
+  background-color: black;
+}
 </style>
