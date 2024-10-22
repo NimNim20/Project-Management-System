@@ -1,4 +1,4 @@
-// import { getFirestore, collection } from 'firebase/firestore';
+import { getFirestore, collection } from 'firebase/firestore';
 
 
 import { getAuth } from "firebase/auth";
@@ -21,7 +21,12 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 const auth = getAuth(app);
 
-export { auth };
+const projectsFirebaseListRef = 'projects';
+
+const projectsList = collection(db, projectsFirebaseListRef);
+
+export { auth, db, projectsList, projectsFirebaseListRef };

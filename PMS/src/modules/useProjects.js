@@ -1,68 +1,69 @@
 // useProjects.js
 import { ref, onMounted } from 'vue';
-import { moviesCollection, moviesFirebaseCollectionRef, db } from './firebase';
+import { projectsList, projectsFirebaseListRef, db } from './firebase';
 import { onSnapshot, addDoc, doc, deleteDoc } from 'firebase/firestore';
-
-// export function useProjects() {
-//   const projects = ref([])
-//   const error = ref(null)
 
 export const useProjects = () => {
 
-}
+  const newProjectTitle = ref('');
 
-  // Fetch projects
-  const fetchProjects = async () => {
-    try {
-      // Simulate API call
-      projects.value = [
-        { id: 1, name: 'Project Alpha', tasks: [] },
-        { id: 2, name: 'Project Beta', tasks: [] }
-      ]
-    } catch (err) {
-      error.value = 'Failed to fetch projects.'
-    }
-  }
+  const projects = ref([]);
 
-  // Add project
-  const addProject = (name) => {
-    projects.value.push({
-      id: Date.now(),
-      name,
-      tasks: []
+  onMounted(() => {
+    onSnapshot(projectsList, (snapshot) => {
+      projects.value = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data() // spread operator        
+      }))
     })
-  }
+  })
 
-  // Delete project
-  const deleteProject = (id) => {
-    projects.value = projects.value.filter(project => project.id !== id)
-  }
-
-  // Add task to a project
-  const addTaskToProject = (projectId, task) => {
-    const project = projects.value.find(project => project.id === projectId)
-    if (project) {
-      project.tasks.push({
-        id: Date.now(),
-        text: task.text,
-        assignedTo: task.assignedTo || null,
-        priority: task.priority || 'Normal',
-        dueDate: task.dueDate || null,
-        completed: false
+  const addProject = async () => {
+    if (newProjectTitle.value.trim() === '') return
+    try {
+      await addDoc(projectsList, {
+        title: newProjectTitle.value,
+        description: ''
       })
+
+      newProjectTitle.value = ''
+    } catch (error) {
+      error.value = 'Failed to add project'
     }
   }
+
+  const deleteProject = async (id) => {
+    console.log("deleting project with id: ", id)
+    await deleteDoc(doc(db, projectsFirebaseListRef, id))
+  } 
+
+
+
+return { projects, newProjectTitle, addProject, deleteProject }
+}
+  // Add task to a project
+  // const addTaskToProject = (projectId, task) => {
+  //   const project = projects.value.find(project => project.id === projectId)
+  //   if (project) {
+  //     project.tasks.push({
+  //       id: Date.now(),
+  //       text: task.text,
+  //       assignedTo: task.assignedTo || null,
+  //       priority: task.priority || 'Normal',
+  //       dueDate: task.dueDate || null,
+  //       completed: false
+  //     })
+  //   }
+  // }
 
   // Update task in a project
-  const updateTaskInProject = (projectId, taskId, updatedTask) => {
-    const project = projects.value.find(project => project.id === projectId)
-    if (project) {
-      const task = project.tasks.find(task => task.id === taskId)
-      if (task) {
-        Object.assign(task, updatedTask)
-      }
-    }
-  }
+  // const updateTaskInProject = (projectId, taskId, updatedTask) => {
+  //   const project = projects.value.find(project => project.id === projectId)
+  //   if (project) {
+  //     const task = project.tasks.find(task => task.id === taskId)
+  //     if (task) {
+  //       Object.assign(task, updatedTask)
+  //     }
+  //   }
+  // }
 
-  return { projects, error, fetchProjects, addProject, deleteProject, addTaskToProject, updateTaskInProject }
-}
