@@ -39,7 +39,7 @@ const handleProjectClick = (id) => {
 
 .project-list li {
   padding: 10px;
-  background-color: #f0f0f0;
+  background-color: #000;
   margin-bottom: 5px;
   cursor: pointer;
 }
