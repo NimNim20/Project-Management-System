@@ -5,6 +5,7 @@ import { useUsers } from './modules/useUsers'
 import ProjectList from './components/ProjectList.vue'
 import ProjectDetails from './components/ProjectDetails.vue'
 import { useProjects } from './modules/useProjects'
+import createUsers from './components/CreateUser.vue'
 
 // User authentication composable
 const { user, login, logout } = useUsers()
