@@ -1,9 +1,15 @@
 // useProjects.js
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue';
+import { moviesCollection, moviesFirebaseCollectionRef, db } from './firebase';
+import { onSnapshot, addDoc, doc, deleteDoc } from 'firebase/firestore';
 
-export function useProjects() {
-  const projects = ref([])
-  const error = ref(null)
+// export function useProjects() {
+//   const projects = ref([])
+//   const error = ref(null)
+
+export const useProjects = () => {
+
+}
 
   // Fetch projects
   const fetchProjects = async () => {
