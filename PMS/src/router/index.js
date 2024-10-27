@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import TodoView from '../views/ProjectManagement.vue'   // Import To-Do page
-import Home from '../views/HomeView.vue'                          
+import Home from '../views/HomeView.vue'       
+import Login from '../views/LoginView.vue'                   
 import { auth } from '../modules/firebase'     // Firebase authentication instance
 
 // Define routes for your app
@@ -9,6 +10,11 @@ const routes = [
     path: '/',
     name: 'Home',
     component: Home,
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: Login,
   },
   { 
     path: '/todos', 

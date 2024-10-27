@@ -6,12 +6,14 @@ import { ref } from 'vue'
 export const useUsers = () => {
     const user = ref(null);
     const error = ref(null);  // Add a ref to track errors
+    const isLoggedIn =ref(false);
 
     // Login function with error handling
     const login = async (email, password) => {
         error.value = null;  // Clear any previous error
         try {
             await signInWithEmailAndPassword(auth, email, password);
+            isLoggedIn.value = true;
             router.push('/');  // Redirect to home or another route after login
         } catch (err) {
             // Set the error message based on Firebase error
@@ -32,6 +34,8 @@ export const useUsers = () => {
     const logout = async () => {
         try {
             await signOut(auth);
+            isLoggedIn.value = false;
+            user.value = null;
             router.push('/');  // Redirect to home after logout
         } catch (err) {
             console.log(err.message);  // Log any logout errors
@@ -41,11 +45,13 @@ export const useUsers = () => {
     // Track authentication state changes
     onAuthStateChanged(auth, (currentUser) => {
         user.value = currentUser;
+        isLoggedIn.value = !!currentUser;
     })
 
     return {
         user,
-        error,  // Return error ref so it can be used in the UI
+        error,
+        isLoggedIn,
         login,
         logout
     }

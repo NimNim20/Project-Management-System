@@ -5,13 +5,13 @@ import { useUsers } from './modules/useUsers'
 import ProjectList from './components/ProjectList.vue'
 import ProjectDetails from './components/ProjectDetails.vue'
 import { useProjects } from './modules/useProjects'
-import createUsers from './components/CreateUser.vue'
+// import createUsers from './components/CreateUser.vue'
 
 // User authentication composable
 const { user, login, logout } = useUsers()
 
 // Project management composable
-const { projects } = useProjects()
+// const { projects } = useProjects()
 const selectedProjectId = ref(null)
 const isLoggedIn = ref(false)
 
@@ -35,13 +35,6 @@ const handleSelectProject = (projectId) => {
   selectedProjectId.value = projectId
 }
 
-// function userLogin() {
-//   isLoggedIn.value = true
-// }
-
-// function userLogout() {
-//   isLoggedIn.value = false
-// }
 </script>
 
 <template>
