@@ -1,9 +1,16 @@
 <script setup>
 import { ref } from 'vue'
+import { defineProps, defineEmits } from 'vue'
 
-const { projects, selectedProjectId } = defineProps({
-  projects: Array,
-  selectedProjectId: [Number, String]
+const props = defineProps({
+  projects: {
+    type: Array,
+    default: () => [] // Sets default value of array to empty
+  },
+  selectedProjectId: {
+    type: [Number, String],
+    default: null
+  }
 })
 
 const emit = defineEmits(['selectProject'])
@@ -18,10 +25,10 @@ const handleProjectClick = (id) => {
     <h2>Projects</h2>
 
     <!-- Show the list of projects -->
-    <ul v-if="projects.length">
-      <li v-for="project in projects" 
+    <ul v-if="props.projects.length > 0">
+      <li v-for="project in props.projects" 
           :key="project.id" 
-          :class="{ selected: project.id === selectedProjectId }"
+          :class="{ selected: project.id === props.selectedProjectId }"
           @click="handleProjectClick(project.id)">
         {{ project.name }}
       </li>

@@ -35,7 +35,7 @@ export const useUsers = () => {
         try {
             await signOut(auth);
             isLoggedIn.value = false;
-            user.value = null;
+            // user.value = null;
             router.push('/');  // Redirect to home after logout
         } catch (err) {
             console.log(err.message);  // Log any logout errors
