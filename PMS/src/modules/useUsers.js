@@ -24,7 +24,7 @@ export const useUsers = () => {
             } else {
                 error.value = 'Login failed. Please try again later.';
             }
-            console.log(err.message);  // Log the error for debugging purposes
+            console.log(err.code);  // Log the error for debugging purposes
         }
     }
 

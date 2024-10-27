@@ -13,16 +13,19 @@ const { user, login, logout } = useUsers()
 // Project management composable
 const { projects } = useProjects()
 const selectedProjectId = ref(null)
+const isLoggedIn = ref(false)
 
 // Fetch projects if user is logged in
 const handleLogin = async () => {
   await login('admin@admin.com', 'admin1')
+  isLoggedIn.value = true
   if (user.value) {
     useProjects()  // Fetch projects after login
   }
 }
 
 const handleLogout = () => {
+  isLoggedIn.value = false
   logout()
   selectedProjectId.value = null  // Reset project selection on logout
 }
@@ -31,14 +34,25 @@ const handleLogout = () => {
 const handleSelectProject = (projectId) => {
   selectedProjectId.value = projectId
 }
+
+// function userLogin() {
+//   isLoggedIn.value = true
+// }
+
+// function userLogout() {
+//   isLoggedIn.value = false
+// }
 </script>
 
 <template>
   <div class="app-container">
     <header>
 
-      <button @click="handleLogin">Login</button>
-      <button @click="handleLogout">Logout</button>
+      <!-- Only show Login button when logged out -->
+      <button v-if="!isLoggedIn" @click="handleLogin">Login</button> 
+
+      <!-- Only show Logout button when logged in -->
+      <button v-if="isLoggedIn" @click="handleLogout">Logout</button> 
     </header>
 
     <!-- Main Content: Show project management only if logged in -->
