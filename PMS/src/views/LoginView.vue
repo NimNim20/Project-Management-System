@@ -1,19 +1,25 @@
 <script setup>
 import { ref } from 'vue'
 import { useUsers } from '../modules/useUsers'
+import { useProjects } from '../modules/useProjects'
 
-const { login, error } = useUsers()
+const { user, login, logout, isLoggedIn, error } = useUsers()
 
 const email = ref('')
 const password = ref('')
 
 // Handle the login process
 const handleLogin = async () => {
-  try {
-    await login(email.value, password.value)
-  } catch (err) {
-    console.error('Login failed:', err)
+  await login('admin@admin.com', 'admin1')
+  isLoggedIn.value = true
+  if (user.value) {
+    useProjects()  // Fetch projects after login
   }
+}
+
+const handleLogout = () => {
+  isLoggedIn.value = false
+  logout()
 }
 </script>
 
@@ -37,6 +43,7 @@ const handleLogin = async () => {
       </div>
 
       <button type="submit">Login</button>
+      <button v-if="isLoggedIn" @click="handleLogout">Logout</button> 
     </form>
   </div>
 </template>

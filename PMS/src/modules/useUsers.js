@@ -2,7 +2,7 @@ import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebas
 import { auth } from "./firebase.js";
 import router from '/src/router/index.js'
 import { ref } from 'vue'
-import { useProjects } from '../modules/useProjects'
+// import { useProjects } from '../modules/useProjects'
 
 export const useUsers = () => {
     const user = ref(null);

@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue'
 import { useProjects } from '../modules/useProjects'
 
 // Get methods and state from the useProjects composable
-const { projects, error, fetchProjects, addProject, deleteProject, addTaskToProject, updateTaskInProject } = useProjects()
+const { projects, error, addProject, deleteProject, addTaskToProject, updateTaskInProject } = useProjects()
 
 const newProjectName = ref('')
 const newTask = ref({ text: '', assignedTo: '', priority: 'Normal', dueDate: '' })
@@ -11,7 +11,7 @@ const newTask = ref({ text: '', assignedTo: '', priority: 'Normal', dueDate: '' 
 
 // Fetch projects when the component is mounted
 onMounted(() => {
-  fetchProjects()
+  useProjects()
 })
 
 // Handle adding a new project
