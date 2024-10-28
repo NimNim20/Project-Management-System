@@ -1,22 +1,20 @@
-import './assets/main.css'
+import './assets/main.css';
 
-import { createApp } from 'vue'
-import App from './App.vue'
-import router from './router'
-import { auth } from './modules/firebase'; 
+import { createApp } from 'vue';
+import App from './App.vue';
+import router from './router';
+import { auth } from './modules/firebase'; // Import the initialized auth
 
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
-
+import { onAuthStateChanged } from 'firebase/auth';
 
 onAuthStateChanged(auth, (user) => {
     if (user) {
-      console.log("User is authenticated", user);
-
+        console.log("User is authenticated", user);
     } else {
-      console.warn("User is not authenticated");
+        console.warn("User is not authenticated");
     }
-  });
-  
-  const app = createApp(App);
-  app.use(router); 
-  app.mount('#app');
+});
+
+const app = createApp(App);
+app.use(router);
+app.mount('#app');
