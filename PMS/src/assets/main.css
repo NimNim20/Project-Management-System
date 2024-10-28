@@ -1,4 +1,11 @@
 @import './base.css';
+@import './style.css';
+body {
+  background-color: rgb(43, 0, 112) !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
 a,
 .green {

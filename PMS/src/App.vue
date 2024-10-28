@@ -70,6 +70,8 @@ const handleSelectProject = (projectId) => {
 </template>
 
 <style scoped>
+
+
 .app-container {
   max-width: 900px;
   margin: 0 auto;
