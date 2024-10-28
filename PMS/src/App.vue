@@ -10,6 +10,9 @@ import createUsers from './components/CreateUser.vue'
 // User authentication composable
 const { user, login, logout } = useUsers()
 
+// Create user component
+const { createUser } = createUsers()
+
 // Project management composable
 const { projects, fetchProjects } = useProjects()
 const selectedProjectId = ref(null)
@@ -17,6 +20,8 @@ const selectedProjectId = ref(null)
 // Fetch projects if user is logged in
 const handleLogin = async () => {
   await login('admin@admin.com', 'admin1')
+  // Rewrite this bit to fetch projects after login
+
   if (user.value) {
     fetchProjects()  // Fetch projects after login
   }
