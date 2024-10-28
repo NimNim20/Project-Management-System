@@ -37,12 +37,15 @@ import NavComponent from '../components/NavComponent.vue';
   font-weight: 500;
   border-radius: 5px;
 }
-.articleTitle span {
-  transition: background-position 0.3s ease-in-out;
+.articleTitle {
+  transition: background-image 1.5s ease-in-out;
 }
 
-.articleTitle span:hover {
-  background-size: 200% 100%;
-  background-position: right center;
+.articleTitle:hover {
+  background-image: linear-gradient(90deg, #f6b93b, #b71540);
+  background-size: 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
 }
 </style>
