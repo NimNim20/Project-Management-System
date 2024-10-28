@@ -18,7 +18,7 @@ const {
 const { user } = useUsers()
 
 const newProjectName = ref('')
-const newTask = ref({ text: '', assignedTo: '', priority: 'Normal', dueDate: '' })
+const newTask = ref({ text: '', assignedTo: '', priority: '', dueDate: '' })
 
 
 // Fetch projects when the component is mounted
@@ -38,7 +38,7 @@ const handleAddProject = () => {
 const handleAddTask = (projectId) => {
   if (newTask.value.text.trim()) {
     addTaskToProject(projectId, newTask.value)
-    newTask.value = { text: '', assignedTo: '', priority: 'Normal', dueDate: '' } // Clear task input
+    newTask.value = { text: '', assignedTo: '', priority: '', dueDate: '' } // Clear task input
   }
 }
 

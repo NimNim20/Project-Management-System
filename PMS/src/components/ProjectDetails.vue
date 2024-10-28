@@ -12,7 +12,7 @@ const { addTaskToProject, updateTaskInProject } = useProjects()
 const newTask = ref({
   text: '',
   assignedTo: '',
-  priority: 'Normal',
+  priority: '',
   dueDate: ''
 })
 
@@ -27,7 +27,7 @@ watch(() => props.projectId, (newVal) => {
 const handleAddTask = () => {
   if (newTask.value.text.trim()) {
     addTaskToProject(selectedProject.value.id, newTask.value)
-    newTask.value = { text: '', assignedTo: '', priority: 'Normal', dueDate: '' } // Clear task input
+    newTask.value = { text: '', assignedTo: '', priority: '', dueDate: '' } // Clear task input
   }
 }
 

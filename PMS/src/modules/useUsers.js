@@ -2,6 +2,7 @@ import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebas
 import { auth } from "./firebase.js";
 import router from '/src/router/index.js'
 import { ref } from 'vue'
+import { useProjects } from '../modules/useProjects'
 
 export const useUsers = () => {
     const user = ref(null);
@@ -41,6 +42,15 @@ export const useUsers = () => {
             console.log(err.message);  // Log any logout errors
         }
     }
+
+    // Admin login function
+// const handleLogin = async () => {
+//     await login('admin@admin.com', 'admin1')
+//     isLoggedIn.value = true
+//     if (user.value) {
+//         useProjects()  // Fetch projects after login
+//     }
+// }
 
     // Track authentication state changes
     onAuthStateChanged(auth, (currentUser) => {
