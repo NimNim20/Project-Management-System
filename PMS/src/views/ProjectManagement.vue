@@ -1,24 +1,12 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useProjects } from '../modules/useProjects'
-import { useUsers } from '../modules/useUsers'
 
 // Get methods and state from the useProjects composable
-const { 
-  projects, 
-  error, 
-  fetchProjects, 
-  addProject, 
-  deleteProject, 
-  addTaskToProject, 
-  updateTaskInProject,
-} = useProjects()
-
-// Get user state from the useUsers composable
-const { user } = useUsers()
+const { projects, error, fetchProjects, addProject, deleteProject, addTaskToProject, updateTaskInProject } = useProjects()
 
 const newProjectName = ref('')
-const newTask = ref({ text: '', assignedTo: '', priority: '', dueDate: '' })
+const newTask = ref({ text: '', assignedTo: '', priority: 'Normal', dueDate: '' })
 
 
 // Fetch projects when the component is mounted
@@ -38,7 +26,7 @@ const handleAddProject = () => {
 const handleAddTask = (projectId) => {
   if (newTask.value.text.trim()) {
     addTaskToProject(projectId, newTask.value)
-    newTask.value = { text: '', assignedTo: '', priority: '', dueDate: '' } // Clear task input
+    newTask.value = { text: '', assignedTo: '', priority: 'Normal', dueDate: '' } // Clear task input
   }
 }
 
@@ -56,32 +44,6 @@ const handleDeleteProject = (id) => {
 <template>
   <div class="project-container">
     <h2>Project Management</h2>
-
-    <main v-if="user">
-      <h1>Project Management System</h1>
-
-      <div class="content">
-        <!-- Project List Component -->
-        <ProjectList 
-          :projects="projects" 
-          @selectProject="handleSelectProject" 
-          :selectedProjectId="selectedProjectId" />
-
-        <!-- Show Project Details only if a project is selected -->
-        <div v-if="selectedProjectId">
-          <ProjectDetails 
-            :projectId="selectedProjectId" 
-            :projects="projects" />
-        </div>
-        <div v-else>
-          <p>Select a project to view details.</p>
-        </div>
-      </div>
-    </main>
-
-    <div v-else>
-      <p>Please log in to access your projects.</p>
-    </div>
 
     <!-- Add Project Form -->
     <form @submit.prevent="handleAddProject">
@@ -122,47 +84,98 @@ const handleDeleteProject = (id) => {
         </form>
       </li>
     </ul>
-
-    <p v-else>No projects yet!</p>
   </div>
 </template>
 
-<style scoped>
-.project-container {
-  max-width: 600px;
-  margin: 0 auto;
-  text-align: center;
+<script setup>
+/* 
+Week 35 Setup
+setup firebase project
+setup vue
+npm install firebase + npm install firebase-tools
+firebase login (in terminal)
+open firebase console and "create a mew project" + "create new database"
+Changed the rules so that the database is opened for longer 
+Made placeholder collection (data)
+Imported firebase  firebaseConfig (api key, and more) 
+Imported Firebase functions (initializeApp, getFirestore, collection etc.)
+Created input field to add a new movie - STEP 1
+Created a list of movies - STEP 2
+Created a reference to the movies collection in Firebase - STEP 2.5
+Created a function to retrieve a new movie to the list - STEP 3
+Created a function to add a new movie to the list - STEP 4
+Created a function to delete a movie from the list - STEP 5
+Installed dotenv and created a .env file with the firebaseConfig (Security)
+*/
+import { ref, onMounted } from 'vue'
+import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc } from 'firebase/firestore'
+
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration (STEP FIREBASE)
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Step 1 Create a new movie title and store it in a ref
+const projectTitle = ref('')
+// const projectDesc = ref('')
+
+// Step 2 Create a list of movies and store it in a ref
+const projects = ref([])
+
+// Step 2.5 Create a reference to the movies collection in Firebase
+const projectsFirebaseCollectionRef = 'projects'
+
+const projectsCollection = collection(db, projectsFirebaseCollectionRef);
+// Step 3 Create a function to retrieve a new movie to the list
+onMounted (() => {
+  onSnapshot(projectsCollection, (snapshot) => {
+    projects.value = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data() //Spread Operator
+      // title: doc.data().title
+    }))
+  })
+})
+
+// Step 4 Create a function to add a new movie to the list
+const addProject = async () => {
+  if (projectTitle.value.trim() === '') return; // Checks to see if the input is empty, return (stops the function)
+  
+  await addDoc(projectsCollection, {
+    title: projectTitle.value
+  })
+
+  projectTitle.value = ''
 }
 
-ul {
-  list-style-type: none;
-  padding: 0;
+// Step 5: create a function to delete a movie from the list
+const deleteProject = async (id) => {
+  console.log("Deleting project with id: ", id)
+  await deleteDoc(doc(db, projectsFirebaseCollectionRef, id))
+}
+</script>
+
+<style>
+@media (min-width: 1024px) {
+  .about {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+  }
 }
 
-li {
-  margin-bottom: 1rem;
-}
-
-.completed span {
-  text-decoration: line-through;
-}
-
-button {
-  background-color: #f44336;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 0.25rem 0.5rem;
-  cursor: pointer;
-  margin-left: 1rem;
-}
-
-input, select {
-  margin-bottom: 0.5rem;
-  padding: 0.5rem;
-}
-
-input[type="checkbox"] {
-  margin-right: 0.5rem;
-}
 </style>

@@ -11,7 +11,7 @@ import { useProjects } from './modules/useProjects'
 const { user, login, logout } = useUsers()
 
 // Create user component
-const { createUser } = createUsers()
+// const { createUser } = createUsers()
 
 // Project management composable
 // const { projects } = useProjects()
