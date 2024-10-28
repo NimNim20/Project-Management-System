@@ -88,6 +88,7 @@ input {
   margin-top: 0.3rem;
   border: 1px solid #ccc;
   border-radius: 4px;
+  color: black;
 }
 
 button {
