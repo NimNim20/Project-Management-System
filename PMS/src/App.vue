@@ -5,7 +5,7 @@ import { useUsers } from './modules/useUsers'
 import ProjectList from './components/ProjectList.vue'
 import ProjectDetails from './components/ProjectDetails.vue'
 import { useProjects } from './modules/useProjects'
-import createUsers from './components/CreateUser.vue'
+// import createUsers from './components/CreateUser.vue'
 
 // User authentication composable
 const { user, login, logout } = useUsers()
@@ -14,20 +14,21 @@ const { user, login, logout } = useUsers()
 const { createUser } = createUsers()
 
 // Project management composable
-const { projects, fetchProjects } = useProjects()
+// const { projects } = useProjects()
 const selectedProjectId = ref(null)
+const isLoggedIn = ref(false)
 
 // Fetch projects if user is logged in
 const handleLogin = async () => {
   await login('admin@admin.com', 'admin1')
-  // Rewrite this bit to fetch projects after login
-
+  isLoggedIn.value = true
   if (user.value) {
-    fetchProjects()  // Fetch projects after login
+    useProjects()  // Fetch projects after login
   }
 }
 
 const handleLogout = () => {
+  isLoggedIn.value = false
   logout()
   selectedProjectId.value = null  // Reset project selection on logout
 }
@@ -36,14 +37,18 @@ const handleLogout = () => {
 const handleSelectProject = (projectId) => {
   selectedProjectId.value = projectId
 }
+
 </script>
 
 <template>
   <div class="app-container">
     <header>
 
-      <button @click="handleLogin">Login</button>
-      <button @click="handleLogout">Logout</button>
+      <!-- Only show Login button when logged out -->
+      <button v-if="!isLoggedIn" @click="handleLogin">Login</button> 
+
+      <!-- Only show Logout button when logged in -->
+      <button v-if="isLoggedIn" @click="handleLogout">Logout</button> 
     </header>
 
     <!-- Main Content: Show project management only if logged in -->

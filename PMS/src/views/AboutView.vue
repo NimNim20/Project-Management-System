@@ -1,4 +1,10 @@
+<script setup lang="ts">
+import NavComponent from '@/components/NavComponent.vue';
+</script>
+
 <template>
+  <NavComponent />
+
   <div class="about">
     <h1>This is an about page</h1>
   </div>

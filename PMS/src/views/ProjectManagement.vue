@@ -1,12 +1,24 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useProjects } from '../modules/useProjects'
+import { useUsers } from '../modules/useUsers'
 
 // Get methods and state from the useProjects composable
-const { projects, error, fetchProjects, addProject, deleteProject, addTaskToProject, updateTaskInProject } = useProjects()
+const { 
+  projects, 
+  error, 
+  fetchProjects, 
+  addProject, 
+  deleteProject, 
+  addTaskToProject, 
+  updateTaskInProject,
+} = useProjects()
+
+// Get user state from the useUsers composable
+const { user } = useUsers()
 
 const newProjectName = ref('')
-const newTask = ref({ text: '', assignedTo: '', priority: 'Normal', dueDate: '' })
+const newTask = ref({ text: '', assignedTo: '', priority: '', dueDate: '' })
 
 
 // Fetch projects when the component is mounted
@@ -26,7 +38,7 @@ const handleAddProject = () => {
 const handleAddTask = (projectId) => {
   if (newTask.value.text.trim()) {
     addTaskToProject(projectId, newTask.value)
-    newTask.value = { text: '', assignedTo: '', priority: 'Normal', dueDate: '' } // Clear task input
+    newTask.value = { text: '', assignedTo: '', priority: '', dueDate: '' } // Clear task input
   }
 }
 
@@ -44,6 +56,32 @@ const handleDeleteProject = (id) => {
 <template>
   <div class="project-container">
     <h2>Project Management</h2>
+
+    <main v-if="user">
+      <h1>Project Management System</h1>
+
+      <div class="content">
+        <!-- Project List Component -->
+        <ProjectList 
+          :projects="projects" 
+          @selectProject="handleSelectProject" 
+          :selectedProjectId="selectedProjectId" />
+
+        <!-- Show Project Details only if a project is selected -->
+        <div v-if="selectedProjectId">
+          <ProjectDetails 
+            :projectId="selectedProjectId" 
+            :projects="projects" />
+        </div>
+        <div v-else>
+          <p>Select a project to view details.</p>
+        </div>
+      </div>
+    </main>
+
+    <div v-else>
+      <p>Please log in to access your projects.</p>
+    </div>
 
     <!-- Add Project Form -->
     <form @submit.prevent="handleAddProject">
