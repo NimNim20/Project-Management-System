@@ -29,4 +29,4 @@ const projectsFirebaseListRef = 'projects';
 
 const projectsList = collection(db, projectsFirebaseListRef);
 
-export { auth, db, projectsList, projectsFirebaseListRef };
+export { getAuth, auth, db, projectsList, projectsFirebaseListRef };
