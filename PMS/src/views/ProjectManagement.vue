@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue';
 import { useProjects } from '../modules/useProjects';
 import navbarComponent from '../components/NavComponent.vue';
 
-const { projects, error, addProject, deleteProject, addTaskToProject, updateTaskInProject } = useProjects();
+const { projects, error, addProject, addTaskToProject, updateTaskInProject } = useProjects();
 
 const newProjectName = ref('');
 const newTask = ref({ text: '', assignedTo: '', priority: 'Normal', dueDate: '' });
@@ -27,12 +27,49 @@ const handleAddTask = (projectId) => {
   }
 };
 
-const handleDeleteProject = (id) => {
-  deleteProject(id);
-};
-
 const handleToggleComplete = (projectId, task, newStatus) => {
   updateTaskInProject(projectId, task.id, { status: newStatus });
+};
+
+const isEditing = ref(false); // Track if we are in edit mode
+const editingTask = ref(null); // Store the task being edited
+
+// Start editing a task
+const startEditingTask = (task, projectId) => {
+  isEditing.value = true;
+  editingTask.value = { ...task, projectId }; // Include projectId for conditional check
+};
+
+
+// Save edited task
+const handleSaveTask = async (projectId) => {
+  if (editingTask.value) {
+    const updatedTask = {
+      taskTitle: editingTask.value.taskTitle,
+      assignedTo: editingTask.value.assignedTo,
+      priority: editingTask.value.priority,
+      dueDate: editingTask.value.dueDate,
+      status: editingTask.value.status // Ensure this is correct based on your needs
+    };
+
+    try {
+      await updateTaskInProject(projectId, editingTask.value.id, updatedTask);
+      // Optionally refetch projects or update local state here
+    } catch (error) {
+      console.error('Error updating task:', error);
+    } finally {
+      isEditing.value = false;
+      editingTask.value = null; // Reset editingTask
+    }
+  }
+};
+
+
+
+// Cancel editing
+const cancelEditing = () => {
+  isEditing.value = false;
+  editingTask.value = null;
 };
 </script>
 
@@ -75,6 +112,8 @@ const handleToggleComplete = (projectId, task, newStatus) => {
                   class="task-button" 
                   :class="{ 'completed': task.status === 'completed' }"
                   @click="handleToggleComplete(project.id, task, 'completed')">Completed</button>
+
+                  <button class="edit-task" @click="startEditingTask(task, project.id)">Edit</button>
               </div>
             </li>
           </ul>
@@ -94,6 +133,28 @@ const handleToggleComplete = (projectId, task, newStatus) => {
           <input v-model="newTask.dueDate" type="date" />
           <button class="addTask" type="submit">Add Task</button>
         </form>
+
+        <div v-if="isEditing" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+            <h3 class="text-lg font-semibold mb-4 text-gray-700">Edit Task</h3>
+            <form @submit.prevent="handleSaveTask" class="space-y-4">
+              <input v-model="editingTask.taskTitle" type="text" placeholder="Edit task name" required
+                    class="taskEdit w-full px-4 py-2 border-2 border-gray-500 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-500 focus:outline-none" />
+              <input v-model="editingTask.assignedTo" type="text" placeholder="Edit assigned to"
+                    class="taskEdit w-full px-4 py-2 border-2 border-gray-500 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-500 focus:outline-none" />
+              <select v-model="editingTask.priority"
+                      class="taskEdit w-full px-4 py-2 border-2 border-gray-500 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-500 focus:outline-none">
+                <option>Low</option>
+                <option>Normal</option>
+                <option>High</option>
+              </select>
+              <input v-model="editingTask.dueDate" type="date"
+                    class="taskEdit w-full px-4 py-2 border-2 border-gray-500 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-500 focus:outline-none" />
+              <button type="submit" class="w-full py-2 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600">Save Task</button>
+              <button type="button" @click="cancelEditing" class="w-full py-2 bg-gray-300 text-gray-800 rounded-lg font-semibold hover:bg-gray-400">Cancel</button>
+            </form>
+          </div>
+        </div>
       </li>
     </ul>
   </div>
@@ -104,9 +165,34 @@ const handleToggleComplete = (projectId, task, newStatus) => {
   max-width: 800px;
   margin: auto;
 }
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 500px;
+}
+
+.taskEdit{
+  border: 2px solid #ccc;
+}
+
 .completed {
   text-decoration: line-through;
 }
+
 .error {
   color: red;
 }

@@ -42,15 +42,18 @@ export const useProjects = () => {
   };
 
   // Toggle task completion or update other task fields
-  const updateTaskInProject = async (projectId, taskId, updates) => {
+  const updateTaskInProject = async (projectId, taskId, updatedTask) => {
+    console.log('Updating task:', { projectId, taskId, updatedTask });
     try {
       const taskDocRef = doc(db, projectsFirebaseListRef, projectId, 'taskHandling', taskId);
-      await updateDoc(taskDocRef, updates);
+      await updateDoc(taskDocRef, updatedTask);
     } catch (e) {
       console.error('Failed to update task:', e);
       error.value = 'Failed to update task';
     }
   };
+  
+  
 
   // Delete a project
   const deleteProject = async (id) => {
