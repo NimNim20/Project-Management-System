@@ -22,14 +22,15 @@ nav {
 }
 
 nav a {
-  color: #000000;
+
+  color:rgba(147, 51, 234, 1);
   font-weight: 500;
   text-decoration: none;
   transition: color 0.3s ease, transform 0.3s ease;
 }
 
 nav a:hover {
-  color: #0c4068;
+  color: rgba(255, 51, 234, 1);
   transform: scale(1.1);
 }
 </style>

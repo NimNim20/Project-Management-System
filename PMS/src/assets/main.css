@@ -1,11 +1,19 @@
 @import './base.css';
 @import './style.css';
 body {
-  background-color: rgb(43, 0, 112) !important;
+  background: linear-gradient(to bottom, rgba(43, 0, 112, 0.9), rgba(0, 0, 0, 0.9)) !important;
+  background-image: url('path-to-your-halloween-background.png');
+  background-size: cover;
+  background-position: center; 
+  color: #f9f9f9; 
+  font-family: 'Arial', sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
+  min-height: 100vh;
+  margin: 0;
 }
+
 
 a,
 .green {

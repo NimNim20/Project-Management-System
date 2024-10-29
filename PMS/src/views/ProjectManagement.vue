@@ -1,3 +1,71 @@
+<script setup>
+import { ref, onMounted } from 'vue';
+import { useProjects } from '../modules/useProjects';
+import navbarComponent from '../components/NavComponent.vue';
+
+const { projects, error, addProject, deleteProject, addTaskToProject, updateTaskInProject } = useProjects();
+
+const newProjectName = ref('');
+const newTask = ref({ text: '', assignedTo: '', priority: 'Normal', dueDate: '' });
+
+// Modal states
+const isModalVisible = ref(false);
+const confirmedProjectId = ref(null);
+const confirmedProjectTitle = ref(''); // New ref for project title
+
+onMounted(() => {
+  useProjects();
+});
+
+const handleAddProject = () => {
+  if (newProjectName.value.trim()) {
+    addProject(newProjectName.value.trim());
+    newProjectName.value = '';
+  }
+};
+
+const handleAddTask = (projectId) => {
+  if (newTask.value.text.trim()) {
+    addTaskToProject(projectId, newTask.value);
+    newTask.value = { text: '', assignedTo: '', priority: 'Normal', dueDate: '' };
+  }
+};
+
+// Show confirmation modal
+const confirmDelete = (id, title) => {
+  confirmedProjectId.value = id; // Store project ID to delete
+  confirmedProjectTitle.value = title; // Store project title
+  isModalVisible.value = true; // Show modal
+};
+
+// Delete project after confirmation
+const handleDeleteProject = (id) => {
+  deleteProject(id);
+  closeModal(); // Close modal after deletion
+};
+
+// Close modal
+const closeModal = () => {
+  isModalVisible.value = false;
+  confirmedProjectId.value = null; // Reset project ID
+  confirmedProjectTitle.value = ''; // Reset project title
+};
+
+const handleToggleComplete = (projectId, task, newStatus) => {
+  updateTaskInProject(projectId, task.id, { status: newStatus });
+};
+
+// Function to sort tasks by priority
+const sortedTasks = (tasks, status) => {
+  return tasks
+    .filter(task => task.status === status)
+    .sort((a, b) => {
+      const priorityOrder = { High: 1, Normal: 2, Low: 3 };
+      return priorityOrder[a.priority] - priorityOrder[b.priority];
+    });
+};
+</script>
+
 <template>
   <header>
     <navbarComponent />
@@ -17,7 +85,7 @@
     <ul v-if="projects.length">
       <li v-for="project in projects" :key="project.id">
         <h3>{{ project.projectTitle }}</h3>
-        <button class="deleteProject" @click="handleDeleteProject(project.id)">Delete Project</button>
+        <button class="deleteProject" @click="confirmDelete(project.id, project.projectTitle)">Delete Project</button>
 
         <!-- Task List for each project -->
         <div class="task-list">
@@ -116,57 +184,63 @@
         </form>
       </li>
     </ul>
+
+    <div v-if="isModalVisible" class="modal">
+      <div class="modal-content">
+        <span class="close" @click="closeModal">&times;</span>
+        <h2 class="text-neutral-950">Are you sure you want to delete the project "{{ confirmedProjectTitle }}"?</h2>
+        <p class="text-neutral-950">This action cannot be undone.</p>
+        <div class="confirmButtons">
+        <button class="greenBtn text-emerald-400" @click="handleDeleteProject(confirmedProjectId)">Yes</button>
+        <button class="redBtn text-rose-600" @click="closeModal">Cancel</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted } from 'vue';
-import { useProjects } from '../modules/useProjects';
-import navbarComponent from '../components/NavComponent.vue';
-
-const { projects, error, addProject, deleteProject, addTaskToProject, updateTaskInProject } = useProjects();
-
-const newProjectName = ref('');
-const newTask = ref({ text: '', assignedTo: '', priority: 'Normal', dueDate: '' });
-
-onMounted(() => {
-  useProjects();
-});
-
-const handleAddProject = () => {
-  if (newProjectName.value.trim()) {
-    addProject(newProjectName.value.trim());
-    newProjectName.value = '';
-  }
-};
-
-const handleAddTask = (projectId) => {
-  if (newTask.value.text.trim()) {
-    addTaskToProject(projectId, newTask.value);
-    newTask.value = { text: '', assignedTo: '', priority: 'Normal', dueDate: '' };
-  }
-};
-
-const handleDeleteProject = (id) => {
-  deleteProject(id);
-};
-
-const handleToggleComplete = (projectId, task, newStatus) => {
-  updateTaskInProject(projectId, task.id, { status: newStatus });
-};
-
-// Function to sort tasks by priority
-const sortedTasks = (tasks, status) => {
-  return tasks
-    .filter(task => task.status === status)
-    .sort((a, b) => {
-      const priorityOrder = { High: 1, Normal: 2, Low: 3 };
-      return priorityOrder[a.priority] - priorityOrder[b.priority];
-    });
-};
-</script>
 
 <style>
+.confirmButtons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+
+.greenBtn {
+  background-color: #08925f;
+  color: white;
+  transition: background-color 0.3s;
+}
+
+.greenBtn:hover {
+  background-color: #10B981;
+}
+
+
+.redBtn {
+  background-color: #703834;
+  color: white;
+  transition: background-color 0.3s;
+}
+
+.redBtn:hover {
+  background-color: #ff0000;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 .project-container {
   max-width: 1000px;
   gap: 50px;
@@ -224,7 +298,37 @@ button, input, optgroup, select, textarea {
 
 .deleteProject {
   color: white;
-  background-color: #ff0000;
+  background-color: #f44336; /* Red */
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure modal is on top */
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  width: 300px;
+  text-align: center;
+  position: relative; /* Added for positioning the close button */
+}
+
+.close {
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 1.5rem;
 }
 
 .taskForm {
