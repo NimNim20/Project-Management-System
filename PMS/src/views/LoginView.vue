@@ -64,7 +64,7 @@ const handleLogout = () => {
   border: 1px solid #ddd;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  animation: pulse 5s infinite;
+  animation: pulse 10s infinite;
 }
 
 @keyframes pulse {
@@ -72,7 +72,7 @@ const handleLogout = () => {
     transform: scale(1);
   }
   50% {
-    transform: scale(1.02);
+    transform: scale(1.05);
   }
 }
 
