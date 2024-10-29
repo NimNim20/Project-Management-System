@@ -72,12 +72,6 @@ const handleSelectProject = (projectId) => {
 <style scoped>
 
 
-.app-container {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
 header {
   line-height: 1.5;
   max-height: 100vh;

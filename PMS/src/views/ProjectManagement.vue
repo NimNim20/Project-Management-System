@@ -1,45 +1,8 @@
-<script setup>
-import { ref, onMounted } from 'vue';
-import { useProjects } from '../modules/useProjects';
-import navbarComponent from '../components/NavComponent.vue';
-
-const { projects, error, addProject, deleteProject, addTaskToProject, updateTaskInProject } = useProjects();
-
-const newProjectName = ref('');
-const newTask = ref({ text: '', assignedTo: '', priority: 'Normal', dueDate: '' });
-
-// Fetch projects when the component is mounted
-onMounted(() => {
-  useProjects();
-});
-
-const handleAddProject = () => {
-  if (newProjectName.value.trim()) {
-    addProject(newProjectName.value.trim());
-    newProjectName.value = ''; // Clear input after adding
-  }
-};
-
-const handleAddTask = (projectId) => {
-  if (newTask.value.text.trim()) {
-    addTaskToProject(projectId, newTask.value);
-    newTask.value = { text: '', assignedTo: '', priority: 'Normal', dueDate: '' }; // Clear task input
-  }
-};
-
-const handleDeleteProject = (id) => {
-  deleteProject(id);
-};
-
-const handleToggleComplete = (projectId, task, newStatus) => {
-  updateTaskInProject(projectId, task.id, { status: newStatus });
-};
-</script>
-
 <template>
   <header>
     <navbarComponent />
   </header>
+
   <div class="project-container">
     <h2 class="text-2xl text-orange-300 mb-3">Project Management</h2>
 
@@ -58,26 +21,83 @@ const handleToggleComplete = (projectId, task, newStatus) => {
 
         <!-- Task List for each project -->
         <div class="task-list">
-          <h4>Tasks</h4>
-          <ul>
-            <li v-for="task in project.tasks" :key="task.id" class="task-item">
-              <span>{{ task.taskTitle }} (Assigned to: {{ task.assignedTo }}, Priority: {{ task.priority }})</span>
-              <div class="status-buttons">
-                <button 
-                  class="task-button" 
-                  :class="{ 'not-started': task.status === 'not started' }"
-                  @click="handleToggleComplete(project.id, task, 'not started')">Not Started</button>
-                <button 
-                  class="task-button" 
-                  :class="{ 'in-progress': task.status === 'in progress' }"
-                  @click="handleToggleComplete(project.id, task, 'in progress')">In Progress</button>
-                <button 
-                  class="task-button" 
-                  :class="{ 'completed': task.status === 'completed' }"
-                  @click="handleToggleComplete(project.id, task, 'completed')">Completed</button>
-              </div>
-            </li>
-          </ul>
+          <h1 class="text-4xl font-bold">Tasks</h1>
+          <div class="grid-container">
+            <div class="grid-item">
+              <h5 class="status-title">Not Started</h5>
+              <ul>
+                <li v-for="task in sortedTasks(project.tasks, 'not started')" :key="task.id" class="task-item">
+                  <div class="block max-w-sm p-6 bg- border border-gray-200 rounded-lg shadow hover:bg-gray-100">
+                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">
+                      {{ task.taskTitle }}
+                    </h5>
+                    <p class="taskDesc font-normal text-sm text-gray-700">
+                      Assigned to: {{ task.assignedTo }}, Priority: {{ task.priority }}<br />
+                      Due Date: {{ task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'N/A' }}
+                    </p>
+                    <div class="status-buttons mt-4">
+                      <select v-model="task.status" @change="handleToggleComplete(project.id, task, task.status)">
+                        <option value="not started">Not Started</option>
+                        <option value="in progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                      </select>
+                      <div class="status-indicator not-started"></div>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <div class="grid-item">
+              <h5 class="status-title">In Progress</h5>
+              <ul>
+                <li v-for="task in sortedTasks(project.tasks, 'in progress')" :key="task.id" class="task-item">
+                  <div class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100">
+                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">
+                      {{ task.taskTitle }}
+                    </h5>
+                    <p class="taskDesc font-normal text-sm text-gray-700">
+                      Assigned to: {{ task.assignedTo }}, Priority: {{ task.priority }}<br />
+                      Due Date: {{ task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'N/A' }}
+                    </p>
+                    <div class="status-buttons mt-4">
+                      <select v-model="task.status" @change="handleToggleComplete(project.id, task, task.status)">
+                        <option value="not started">Not Started</option>
+                        <option value="in progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                      </select>
+                      <div class="status-indicator in-progress"></div>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <div class="grid-item">
+              <h5 class="status-title">Completed</h5>
+              <ul>
+                <li v-for="task in sortedTasks(project.tasks, 'completed')" :key="task.id" class="task-item">
+                  <div class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100">
+                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">
+                      {{ task.taskTitle }}
+                    </h5>
+                    <p class="taskDesc font-normal text-sm text-gray-700">
+                      Assigned to: {{ task.assignedTo }}, Priority: {{ task.priority }}<br />
+                      Due Date: {{ task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'N/A' }}
+                    </p>
+                    <div class="status-buttons mt-4">
+                      <select v-model="task.status" @change="handleToggleComplete(project.id, task, task.status)">
+                        <option value="not started">Not Started</option>
+                        <option value="in progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                      </select>
+                      <div class="status-indicator completed"></div>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
 
         <p v-if="project.tasks.length === 0">No tasks yet!</p>
@@ -87,9 +107,9 @@ const handleToggleComplete = (projectId, task, newStatus) => {
           <input v-model="newTask.text" type="text" placeholder="Add a new task" required />
           <input v-model="newTask.assignedTo" type="text" placeholder="Assigned to" />
           <select class="taskPrio" v-model="newTask.priority">
-            <option>Low</option>
-            <option>Normal</option>
-            <option>High</option>
+            <option value="Low">Low</option>
+            <option value="Normal">Normal</option>
+            <option value="High">High</option>
           </select>
           <input v-model="newTask.dueDate" type="date" />
           <button class="addTask" type="submit">Add Task</button>
@@ -99,13 +119,58 @@ const handleToggleComplete = (projectId, task, newStatus) => {
   </div>
 </template>
 
+<script setup>
+import { ref, onMounted } from 'vue';
+import { useProjects } from '../modules/useProjects';
+import navbarComponent from '../components/NavComponent.vue';
+
+const { projects, error, addProject, deleteProject, addTaskToProject, updateTaskInProject } = useProjects();
+
+const newProjectName = ref('');
+const newTask = ref({ text: '', assignedTo: '', priority: 'Normal', dueDate: '' });
+
+onMounted(() => {
+  useProjects();
+});
+
+const handleAddProject = () => {
+  if (newProjectName.value.trim()) {
+    addProject(newProjectName.value.trim());
+    newProjectName.value = '';
+  }
+};
+
+const handleAddTask = (projectId) => {
+  if (newTask.value.text.trim()) {
+    addTaskToProject(projectId, newTask.value);
+    newTask.value = { text: '', assignedTo: '', priority: 'Normal', dueDate: '' };
+  }
+};
+
+const handleDeleteProject = (id) => {
+  deleteProject(id);
+};
+
+const handleToggleComplete = (projectId, task, newStatus) => {
+  updateTaskInProject(projectId, task.id, { status: newStatus });
+};
+
+// Function to sort tasks by priority
+const sortedTasks = (tasks, status) => {
+  return tasks
+    .filter(task => task.status === status)
+    .sort((a, b) => {
+      const priorityOrder = { High: 1, Normal: 2, Low: 3 };
+      return priorityOrder[a.priority] - priorityOrder[b.priority];
+    });
+};
+</script>
+
 <style>
 .project-container {
-  max-width: 800px;
+  max-width: 1000px;
+  gap: 50px;
   margin: auto;
-}
-.completed {
-  text-decoration: line-through;
 }
 .error {
   color: red;
@@ -122,7 +187,6 @@ const handleToggleComplete = (projectId, task, newStatus) => {
 }
 
 .task-list li {
-  display: flex;
   align-items: center;
   margin: 5px 0;
 }
@@ -165,58 +229,82 @@ button, input, optgroup, select, textarea {
 
 .taskForm {
   display: flex;
-  margin-top: 20px;
-  gap: 10px;
+  margin-top: 10px;
 }
 
-.addTask {
-  color: white;
-  background-color: #000000;
+.taskForm input {
+  margin-right: 10px;
 }
 
-.taskPrio {
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 15px;
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 50px;
+}
+
+.grid-item {
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  position: relative;
+}
+
+.status-title {
+  margin-bottom: 8px;
+  font-size: 1.5em;
+  text-align: center;
   color: black;
 }
 
 .task-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 5px 0;
+  padding: 10px;
 }
 
-.status-buttons {
-  display: flex;
-  gap: 5px;
+/* Status Indicator Circle Styles */
+.status-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-left: 50px;
+  display: inline-block;
 }
 
-.task-button {
-  padding: 0.5rem 1rem;
-  border: none;
+/* Status Indicator Colors */
+.status-indicator.not-started {
+  background-color: red;
+}
+
+.status-indicator.in-progress {
+  background-color: yellow;
+}
+
+.status-indicator.completed {
+  background-color: green;
+}
+
+/* Dropdown Styles */
+select {
+  appearance: none;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
   border-radius: 5px;
+  padding: 10px;
+  font-size: 1em;
+  color: #333;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  outline: none;
+  transition: border-color 0.3s;
 }
 
-.not-started {
-  background-color: red; /* Red for not started */
-  color: white;
+select:hover {
+  border-color: #007BFF;
 }
 
-.in-progress {
-  background-color: yellow; /* Yellow for in progress */
-  color: black;
+select:focus {
+  border-color: #0056b3;
 }
 
-.completed {
-  background-color: green; /* Green for completed */
-  color: white;
-}
-
-.task-button:hover {
-  opacity: 0.8; /* Slightly dim on hover */
+.taskDesc {
+  max-width: 140px;
 }
 </style>

@@ -62,6 +62,19 @@ export const useProjects = () => {
     }
   };
 
+// Delete a task when complete
+const deleteTaskFromProject = async (projectId, taskId) => {
+  try {
+    // Ensure the correct path to the task
+    const taskDocRef = doc(db, projectsFirebaseListRef, projectId, 'taskHandling', taskId);
+    await deleteDoc(taskDocRef); // This should delete the document
+    console.log(`Task ${taskId} deleted from project ${projectId}`);
+  } catch (error) {
+    console.error("Error deleting task: ", error);
+    throw error; // You can rethrow the error if you want to handle it later
+  }
+};
+
   // Fetch projects and their tasks
   onMounted(() => {
     // Listen to changes in the projects collection
@@ -93,5 +106,5 @@ export const useProjects = () => {
     });
   });
 
-  return { projects, newProjectTitle, addProject, deleteProject, addTaskToProject, updateTaskInProject, error };
+  return { projects, newProjectTitle, addProject, deleteProject, addTaskToProject, updateTaskInProject, error, deleteTaskFromProject };
 };
