@@ -1,42 +1,30 @@
+<script setup>
+import NavComponent from '../components/NavComponent.vue';
+</script>
+
 <template>
-  <main>
+  <main class="flex flex-col items-center justify-center min-h-screen bg-gray-100 text-gray-800">
     <NavComponent />
 
-    <h1>Welcome to PMS - Project Management System</h1>
-
-
-
-
+    <!-- Hero Section -->
+    <section class="w-full max-w-4xl text-center p-8">
+      <h1 class="text-4xl md:text-5xl font-bold text-indigo-600 mb-6">
+        Welcome to PMS - Project Management System
+      </h1>
+      <p class="text-lg md:text-xl text-gray-600 mb-8">
+        Manage your projects with ease, collaborate seamlessly, and boost productivity like never before.
+      </p>
+      <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+        <!-- Updated Button with Router Link -->
+        <router-link to="/login">
+          <button class="px-6 py-3 rounded-lg bg-indigo-600 text-white text-lg font-semibold hover:bg-indigo-500 transition duration-300">
+            Get Started
+          </button>
+        </router-link>
+      </div>
+    </section>
   </main>
 </template>
 
-
-<script setup>
-import NavComponent from '../components/NavComponent.vue';
-
-</script>
-
 <style scoped>
-
-.articleTitle{
-  font-size: 2rem;
-  font-weight: 700;
-}
-
-.aboutMakers{
-  font-size: 1.2rem;
-  font-weight: 500;
-  border-radius: 5px;
-}
-.articleTitle {
-  transition: background-image 1.5s ease-in-out;
-}
-
-.articleTitle:hover {
-  background-image: linear-gradient(90deg, #f6b93b, #b71540);
-  background-size: 100%;
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-}
 </style>

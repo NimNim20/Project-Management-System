@@ -27,11 +27,11 @@
               <h5 class="status-title">Not Started</h5>
               <ul>
                 <li v-for="task in sortedTasks(project.tasks, 'not started')" :key="task.id" class="task-item">
-                  <div class="block max-w-sm p-6 bg- border border-gray-200 rounded-lg shadow hover:bg-gray-100">
-                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">
+                  <div class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-white">
                       {{ task.taskTitle }}
                     </h5>
-                    <p class="taskDesc font-normal text-sm text-gray-700">
+                    <p class="taskDesc font-normal text-sm text-white">
                       Assigned to: {{ task.assignedTo }}, Priority: {{ task.priority }}<br />
                       Due Date: {{ task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'N/A' }}
                     </p>
@@ -52,11 +52,11 @@
               <h5 class="status-title">In Progress</h5>
               <ul>
                 <li v-for="task in sortedTasks(project.tasks, 'in progress')" :key="task.id" class="task-item">
-                  <div class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100">
-                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">
+                  <div class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-white">
                       {{ task.taskTitle }}
                     </h5>
-                    <p class="taskDesc font-normal text-sm text-gray-700">
+                    <p class="taskDesc font-normal text-sm text-white">
                       Assigned to: {{ task.assignedTo }}, Priority: {{ task.priority }}<br />
                       Due Date: {{ task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'N/A' }}
                     </p>
@@ -77,11 +77,11 @@
               <h5 class="status-title">Completed</h5>
               <ul>
                 <li v-for="task in sortedTasks(project.tasks, 'completed')" :key="task.id" class="task-item">
-                  <div class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100">
-                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">
+                  <div class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-white">
                       {{ task.taskTitle }}
                     </h5>
-                    <p class="taskDesc font-normal text-sm text-gray-700">
+                    <p class="taskDesc font-normal text-sm text-white">
                       Assigned to: {{ task.assignedTo }}, Priority: {{ task.priority }}<br />
                       Due Date: {{ task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'N/A' }}
                     </p>
