@@ -58,13 +58,6 @@ const handleSelectProject = (projectId) => {
         </div>
       </div>
     </main>
-
-    <!-- If user is not logged in, display message -->
-    <div v-else>
-      <p>Please log in to access your projects.</p>
-    </div>
-
-    <!-- Vue Router View for other routes if needed -->
     <RouterView />
   </div>
 </template>

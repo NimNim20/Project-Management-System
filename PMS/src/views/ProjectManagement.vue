@@ -87,6 +87,41 @@ const cancelEditing = () => {
 </script>
 
 <template>
+
+  <div class="app-container">
+    <header>
+
+      <!-- Only show Login button when logged out -->
+    <!--   <button v-if="!isLoggedIn" @click="handleLogin">Login</button>  -->
+
+      <!-- Only show Logout button when logged in -->
+      <button v-if="isLoggedIn" @click="handleLogout">Logout</button> 
+    </header>
+
+    <!-- Main Content: Show project management only if logged in -->
+    <main v-if="user">
+      <h1>Project Management System</h1>
+
+      <div class="content">
+        <!-- Project List Component -->
+        <ProjectList 
+          :projects="projects" 
+          @selectProject="handleSelectProject" 
+          :selectedProjectId="selectedProjectId" />
+
+        <!-- Show Project Details only if a project is selected -->
+        <div v-if="selectedProjectId">
+          <ProjectDetails 
+            :projectId="selectedProjectId" 
+            :projects="projects" />
+        </div>
+        <div v-else>
+          <p>Select a project to view details.</p>
+        </div>
+      </div>
+    </main>
+    <RouterView />
+  </div>
   <header>
     <navbarComponent />
   </header>
