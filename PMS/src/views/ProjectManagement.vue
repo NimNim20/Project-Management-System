@@ -42,24 +42,24 @@ const startEditingTask = (task, projectId) => {
 
 
 // Save edited task
-const handleSaveTask = async (projectId) => {
+
+const handleSaveTask = async () => {
   if (editingTask.value) {
     const updatedTask = {
       taskTitle: editingTask.value.taskTitle,
       assignedTo: editingTask.value.assignedTo,
       priority: editingTask.value.priority,
       dueDate: editingTask.value.dueDate,
-      status: editingTask.value.status // Ensure this is correct based on your needs
+      status: editingTask.value.status
     };
-
     try {
-      await updateTaskInProject(projectId, editingTask.value.id, updatedTask);
+      await updateTaskInProject(String(editingTask.value.projectId), String(editingTask.value.id), updatedTask);
       // Optionally refetch projects or update local state here
     } catch (error) {
       console.error('Error updating task:', error);
     } finally {
       isEditing.value = false;
-      editingTask.value = null; // Reset editingTask
+      editingTask.value = null;
     }
   }
 };
