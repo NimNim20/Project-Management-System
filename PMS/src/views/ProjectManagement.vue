@@ -131,6 +131,7 @@ const cancelEditing = () => {
                       </select>
                       <div class="status-indicator not-started"></div>
                     </div>
+                    <button class="edit-task" @click="startEditingTask(task, project.id)">Edit</button>
                   </div>
                 </li>
               </ul>
@@ -156,6 +157,7 @@ const cancelEditing = () => {
                       </select>
                       <div class="status-indicator in-progress"></div>
                     </div>
+                    <button class="edit-task" @click="startEditingTask(task, project.id)">Edit</button>
                   </div>
                 </li>
               </ul>
@@ -181,33 +183,12 @@ const cancelEditing = () => {
                       </select>
                       <div class="status-indicator completed"></div>
                     </div>
+                    <button class="edit-task" @click="startEditingTask(task, project.id)">Edit</button>
                   </div>
                 </li>
               </ul>
             </div>
           </div>
-          <h4>Tasks</h4>
-          <ul>
-            <li v-for="task in project.tasks" :key="task.id" class="task-item">
-              <span>{{ task.taskTitle }} (Assigned to: {{ task.assignedTo }}, Priority: {{ task.priority }})</span>
-              <div class="status-buttons">
-                <button 
-                  class="task-button" 
-                  :class="{ 'not-started': task.status === 'not started' }"
-                  @click="handleToggleComplete(project.id, task, 'not started')">Not Started</button>
-                <button 
-                  class="task-button" 
-                  :class="{ 'in-progress': task.status === 'in progress' }"
-                  @click="handleToggleComplete(project.id, task, 'in progress')">In Progress</button>
-                <button 
-                  class="task-button" 
-                  :class="{ 'completed': task.status === 'completed' }"
-                  @click="handleToggleComplete(project.id, task, 'completed')">Completed</button>
-
-                  <button class="edit-task" @click="startEditingTask(task, project.id)">Edit</button>
-              </div>
-            </li>
-          </ul>
         </div>
 
         <p v-if="project.tasks.length === 0">No tasks yet!</p>
