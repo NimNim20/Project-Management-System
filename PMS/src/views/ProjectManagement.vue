@@ -97,26 +97,6 @@ const handleSaveTask = async () => {
   }
 };
 
-// Show confirmation modal
-const confirmDelete = (id, title) => {
-  confirmedProjectId.value = id; // Store project ID to delete
-  confirmedProjectTitle.value = title; // Store project title
-  isModalVisible.value = true; // Show modal
-};
-
-// Delete project after confirmation
-const handleDeleteProject = (id) => {
-  deleteProject(id);
-  closeModal(); // Close modal after deletion
-};
-
-// Close modal
-const closeModal = () => {
-  isModalVisible.value = false;
-  confirmedProjectId.value = null; // Reset project ID
-  confirmedProjectTitle.value = ''; // Reset project title
-};
-
 
 // Cancel editing
 const cancelEditing = () => {
