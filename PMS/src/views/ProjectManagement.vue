@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue';
 import { useProjects } from '../modules/useProjects';
 import navbarComponent from '../components/NavComponent.vue';
 
-const { projects, error, addProject, addTaskToProject, updateTaskInProject } = useProjects();
+const { projects, error, addProject, addTaskToProject, updateTaskInProject, deleteProject } = useProjects();
 
 const newProjectName = ref('');
 const newTask = ref({ text: '', assignedTo: '', priority: 'Normal', dueDate: '' });
@@ -22,6 +22,26 @@ const handleAddProject = () => {
     addProject(newProjectName.value.trim());
     newProjectName.value = '';
   }
+};
+
+// Show confirmation modal
+const confirmDelete = (id, title) => {
+  confirmedProjectId.value = id; // Store project ID to delete
+  confirmedProjectTitle.value = title; // Store project title
+  isModalVisible.value = true; // Show modal
+};
+
+// Delete project after confirmation
+const handleDeleteProject = (id) => {
+  deleteProject(id);
+  closeModal(); // Close modal after deletion
+};
+
+// Close modal
+const closeModal = () => {
+  isModalVisible.value = false;
+  confirmedProjectId.value = null; // Reset project ID
+  confirmedProjectTitle.value = ''; // Reset project title
 };
 
 const handleAddTask = (projectId) => {
@@ -274,18 +294,6 @@ const cancelEditing = () => {
   background-color: #ff0000;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
 .project-container {
   max-width: 1000px;
   gap: 50px;
@@ -312,6 +320,15 @@ const cancelEditing = () => {
 
 .taskEdit{
   border: 2px solid #ccc;
+}
+
+.edit-task {
+  background-color: orange;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  margin-top: 10px;
 }
 
 .completed {
@@ -373,7 +390,7 @@ button, input, optgroup, select, textarea {
   background-color: #f44336; /* Red */
 }
 
-.modal {
+/* .modal {
   position: fixed;
   top: 0;
   left: 0;
@@ -383,8 +400,8 @@ button, input, optgroup, select, textarea {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* Ensure modal is on top */
-}
+  z-index: 1000;
+} */
 
 .modal-content {
   background-color: white;
@@ -392,7 +409,7 @@ button, input, optgroup, select, textarea {
   border-radius: 5px;
   width: 300px;
   text-align: center;
-  position: relative; /* Added for positioning the close button */
+  position: relative;
 }
 
 .close {
