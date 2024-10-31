@@ -10,6 +10,7 @@ const newTask = ref({ text: '', assignedTo: '', priority: 'Normal', dueDate: '' 
 
 // Modal states
 const isModalVisible = ref(false);
+const isAddTaskModalVisible = ref(false); // Controls Add Task modal visibility
 const confirmedProjectId = ref(null);
 const confirmedProjectTitle = ref(''); // New ref for project title
 
@@ -23,6 +24,7 @@ const handleAddProject = () => {
     newProjectName.value = '';
   }
 };
+
 
 // Show confirmation modal
 const confirmDelete = (id, title) => {
@@ -44,10 +46,23 @@ const closeModal = () => {
   confirmedProjectTitle.value = ''; // Reset project title
 };
 
+// Open Add Task Modal
+const openAddTaskModal = (projectId) => {
+  confirmedProjectId.value = projectId; // Set the project ID for the task
+  isAddTaskModalVisible.value = true; // Show add task modal
+};
+
+// Close Add Task Modal
+const closeAddTaskModal = () => {
+  isAddTaskModalVisible.value = false; // Hide modal
+  confirmedProjectId.value = null; // Reset project ID
+};
+
 const handleAddTask = (projectId) => {
   if (newTask.value.text.trim()) {
     addTaskToProject(projectId, newTask.value);
     newTask.value = { text: '', assignedTo: '', priority: 'Normal', dueDate: '' };
+    closeAddTaskModal(); // Close modal after adding task
   }
 };
 
@@ -63,7 +78,8 @@ const sortedTasks = (tasks, status) => {
       const priorityOrder = { High: 1, Normal: 2, Low: 3 };
       return priorityOrder[a.priority] - priorityOrder[b.priority];
     });
-  };
+};
+
 const isEditing = ref(false); // Track if we are in edit mode
 const editingTask = ref(null); // Store the task being edited
 
@@ -73,9 +89,7 @@ const startEditingTask = (task, projectId) => {
   editingTask.value = { ...task, projectId }; // Include projectId for conditional check
 };
 
-
 // Save edited task
-
 const handleSaveTask = async () => {
   if (editingTask.value) {
     const updatedTask = {
@@ -96,7 +110,6 @@ const handleSaveTask = async () => {
   }
 };
 
-
 // Cancel editing
 const cancelEditing = () => {
   isEditing.value = false;
@@ -113,10 +126,19 @@ const cancelEditing = () => {
     <h2 class="text-2xl text-orange-300 mb-3">Project Management</h2>
 
     <!-- Add Project Form -->
-    <form @submit.prevent="handleAddProject">
-      <input v-model="newProjectName" type="text" placeholder="Add a new project" required class="large-input" />
-      <button type="submit" class="addProject">Add Project</button>
-    </form>
+    <button @click="openProjectModal" class="add-project-btn">Add Project</button>
+
+<!-- Modal for adding a project -->
+        <div v-if="isProjectModalVisible" class="modal2">
+          <div class="modal-content2">
+          <span class="close2" @click="closeProjectModal">&times;</span>
+          <h2>Add New Project</h2>
+          <form @submit.prevent="handleAddProject">
+          <input v-model="newProjectName" type="text" placeholder="Project Name" required class="large-input" />
+          <button type="submit" class="greenBtn2">Add</button>
+          </form>
+          </div>
+        </div>
 
     <p v-if="error" class="error">{{ error }}</p>
 
@@ -124,6 +146,7 @@ const cancelEditing = () => {
       <li v-for="project in projects" :key="project.id">
         <h3>{{ project.projectTitle }}</h3>
         <button class="deleteProject" @click="confirmDelete(project.id, project.projectTitle)">Delete Project</button>
+        <button class="addTaskBtn" @click="openAddTaskModal(project.id)">Add Task</button>
 
         <!-- Task List for each project -->
         <div class="task-list">
@@ -211,19 +234,6 @@ const cancelEditing = () => {
 
         <p v-if="project.tasks.length === 0">No tasks yet!</p>
 
-        <!-- Add Task Form for each project -->
-        <form class="taskForm" @submit.prevent="handleAddTask(project.id)">
-          <input v-model="newTask.text" type="text" placeholder="Add a new task" required />
-          <input v-model="newTask.assignedTo" type="text" placeholder="Assigned to" />
-          <select class="taskPrio" v-model="newTask.priority">
-            <option value="Low">Low</option>
-            <option value="Normal">Normal</option>
-            <option value="High">High</option>
-          </select>
-          <input v-model="newTask.dueDate" type="date" />
-          <button class="addTask" type="submit">Add Task</button>
-        </form>
-
         <div v-if="isEditing" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
             <h3 class="text-lg font-semibold mb-4 text-gray-700">Edit Task</h3>
@@ -259,17 +269,186 @@ const cancelEditing = () => {
         </div>
       </div>
     </div>
+    <div v-if="isAddTaskModalVisible" class="modal2">
+      <div class="modal-content2">
+        <span class="close2" @click="closeAddTaskModal">&times;</span>
+        <h2>Add New Task</h2>
+        <form @submit.prevent="handleAddTask(confirmedProjectId)">
+          <input v-model="newTask.text" type="text" placeholder="Task Title" required />
+          <input v-model="newTask.assignedTo" type="text" placeholder="Assigned To" />
+          <select v-model="newTask.priority">
+            <option value="Low">Low</option>
+            <option value="Normal">Normal</option>
+            <option value="High">High</option>
+          </select>
+          <input v-model="newTask.dueDate" type="date" />
+          <button type="submit" class="greenBtn">Add Task</button>
+          <button type="button" @click="closeAddTaskModal" class="redBtn">Cancel</button>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 
 
 <style>
+
+.add-project-btn {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: none;
+  background-color: #4CAF50;
+  color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.add-project-btn:hover {
+  background-color: #45a049;
+}
+
+.modal2 {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease; 
+  z-index: 1000;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 .confirmButtons {
   display: flex;
   justify-content: center;
   gap: 10px;
 }
 
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  max-width: 500px;
+  width: 100%;
+}
+
+.modal-content2 {
+  background: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  position: relative;
+}
+.close2 {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #555;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.close2:hover {
+  color: #333;
+}
+.modal-content2 h2 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+
+.modal-content2 form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+
+.modal-content2 input,
+.modal-content2 select {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.3s;
+}
+
+.modal-content2 input:focus,
+.modal-content2 select:focus {
+  outline: none;
+  border-color: #4CAF50; 
+}
+
+.modal-content2 .greenBtn2,
+.modal-content2 .redBtn2 {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.modal-content2 .greenBtn2 {
+  background-color: #4CAF50;
+  color: #fff;
+}
+
+.modal-content2 .greenBtn2:hover {
+  background-color: #45a049;
+}
+
+.modal-content2 .redBtn2 {
+  background-color: #f44336;
+  color: #fff;
+}
+
+.modal-content2 .redBtn2:hover {
+  background-color: #d32f2f;
+}
+
+
+.modal-content2 .button-group2 {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.addTaskBtn {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  margin-right: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-left: 10px;
+}
+
+.addTaskBtn:hover {
+  background-color: #45a049;
+}
 
 .greenBtn {
   background-color: #08925f;
@@ -297,6 +476,8 @@ const cancelEditing = () => {
   gap: 50px;
   margin: auto;
 }
+
+
 .modal-overlay {
   position: fixed;
   top: 0;
