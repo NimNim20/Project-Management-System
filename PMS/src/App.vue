@@ -1,27 +1,8 @@
 <script setup>
 import { RouterView } from 'vue-router'
 import { ref } from 'vue'
-import { useUsers } from './modules/useUsers'
-import ProjectList from './components/ProjectList.vue'
-import ProjectDetails from './components/ProjectDetails.vue'
-// import { useProjects } from './modules/useProjects'
-// import createUsers from './components/CreateUser.vue'
 
-// User authentication composable
-const { user } = useUsers()
-
-// Create user component
-// const { createUser } = createUsers()
-
-// Project management composable
-// const { projects } = useProjects()
-const selectedProjectId = ref(null)
 const isLoggedIn = ref(false)
-
-// Handle selecting a project
-const handleSelectProject = (projectId) => {
-  selectedProjectId.value = projectId
-}
 
 </script>
 
@@ -29,35 +10,10 @@ const handleSelectProject = (projectId) => {
   <div class="app-container">
     <header>
 
-      <!-- Only show Login button when logged out -->
-    <!--   <button v-if="!isLoggedIn" @click="handleLogin">Login</button>  -->
 
       <!-- Only show Logout button when logged in -->
       <button v-if="isLoggedIn" @click="handleLogout">Logout</button> 
     </header>
-
-    <!-- Main Content: Show project management only if logged in -->
-    <main v-if="user">
-      <h1>Project Management System</h1>
-
-      <div class="content">
-        <!-- Project List Component -->
-        <ProjectList 
-          :projects="projects" 
-          @selectProject="handleSelectProject" 
-          :selectedProjectId="selectedProjectId" />
-
-        <!-- Show Project Details only if a project is selected -->
-        <div v-if="selectedProjectId">
-          <ProjectDetails 
-            :projectId="selectedProjectId" 
-            :projects="projects" />
-        </div>
-        <div v-else>
-          <p>Select a project to view details.</p>
-        </div>
-      </div>
-    </main>
     <RouterView />
   </div>
 </template>
