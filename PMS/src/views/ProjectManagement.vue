@@ -181,6 +181,7 @@ const closeProjectModal = () => {
   </div>
 </div>
 
+
     <p v-if="error" class="error">{{ error }}</p>
 
     <ul v-if="projects.length">
@@ -188,6 +189,24 @@ const closeProjectModal = () => {
         <h3 class="flex justify-center text-4xl font-bold text-emerald-500">{{ project.projectTitle }}</h3>
         <button class="deleteProject" @click="confirmDelete(project.id, project.projectTitle)">Delete Project</button>
         <button class="addTaskBtn" @click="openAddTaskModal(project.id)">Add a new task!</button>
+
+        <div v-if="isAddTaskModalVisible" class="modal2">
+          <div class="modal-content2">
+            <span class="close2" @click="closeAddTaskModal">&times;</span>
+            <h2>Add New Task</h2>
+            <form @submit.prevent="handleAddTask(confirmedProjectId)">
+              <input v-model="newTask.text" type="text" placeholder="Task Name" required />
+              <input v-model="newTask.assignedTo" type="text" placeholder="Assigned To" />
+              <select v-model="newTask.priority">
+                <option value="Low">Low</option>
+                <option value="Normal">Normal</option>
+                <option value="High">High</option>
+              </select>
+              <input v-model="newTask.dueDate" type="date" />
+              <button type="submit" class="greenBtn2">Add Task</button>
+            </form>
+          </div>
+        </div>
 
         <!-- Task List for each project -->
         <div class="task-list">
