@@ -309,13 +309,7 @@ const cancelEditing = () => {
   justify-content: center;
   align-items: center;
 }
-.modal {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  width: 80%;
-  max-width: 500px;
-}
+
 
 .taskEdit{
   border: 2px solid #ccc;
@@ -389,7 +383,7 @@ button, input, optgroup, select, textarea {
   background-color: #f44336; /* Red */
 }
 
-/* .modal {
+ .modal {
   position: fixed;
   top: 0;
   left: 0;
@@ -400,7 +394,7 @@ button, input, optgroup, select, textarea {
   justify-content: center;
   align-items: center;
   z-index: 1000;
-} */
+}  
 
 .modal-content {
   background-color: white;
