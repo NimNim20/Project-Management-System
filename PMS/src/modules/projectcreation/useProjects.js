@@ -1,20 +1,28 @@
-import { ref, onMounted } from 'vue';
-import { projectsList, projectsFirebaseListRef, db } from './firebase';
-import { onSnapshot, addDoc, doc, deleteDoc, collection, updateDoc } from 'firebase/firestore';
+import { ref, onMounted, watch } from 'vue';
+import { projectsList, projectsFirebaseListRef, db } from '../fbfile/firebase';
+import { onSnapshot, addDoc, doc, deleteDoc, collection, updateDoc, where, query } from 'firebase/firestore';
+import { useUsers } from '../user/useUsers';
 
 export const useProjects = () => {
+  const { user, isLoggedIn, isAdmin } = useUsers();
   const projects = ref([]);
   const newProjectTitle = ref('');
   const error = ref(null);
 
-  // Add a new project
   const addProject = async (title) => {
+    if (!user.value) {
+      error.value = 'User is not logged in';
+      return;
+    }
+
     if (title.trim() === '') return;
+
     try {
       await addDoc(projectsList, {
         projectTitle: title,
         projectDesc: '',
-        createdAt: new Date()
+        createdAt: new Date(),
+        uid: user.value.uid
       });
       newProjectTitle.value = '';
     } catch (e) {
@@ -23,8 +31,12 @@ export const useProjects = () => {
     }
   };
 
-  // Add a new task to a specific project
   const addTaskToProject = async (projectId, task) => {
+    if (!user.value) {
+      error.value = 'User is not logged in';
+      return;
+    }
+
     try {
       const taskCollectionRef = collection(db, projectsFirebaseListRef, projectId, 'taskHandling');
       await addDoc(taskCollectionRef, {
@@ -41,12 +53,14 @@ export const useProjects = () => {
     }
   };
 
-  const updateTaskInProject = async (projectId, taskId, updatedTask /* newStatus */) => {
-    console.log('Updating task:', { projectId, taskId, updatedTask/* , newStatus */ });
-    
-    // Check if newStatus is valid, or remove it if it’s causing issues
+  const updateTaskInProject = async (projectId, taskId, updatedTask) => {
+    if (!user.value) {
+      error.value = 'User is not logged in';
+      return;
+    }
+
     const taskDocRef = doc(db, projectsFirebaseListRef, projectId, 'taskHandling', taskId);
-    
+
     try {
       await updateDoc(taskDocRef, updatedTask);
     } catch (e) {
@@ -54,12 +68,13 @@ export const useProjects = () => {
       error.value = 'Failed to update task';
     }
   };
-  
-  
-  
 
-  // Delete a project
   const deleteProject = async (id) => {
+    if (!user.value) {
+      error.value = 'User is not logged in';
+      return;
+    }
+
     try {
       await deleteDoc(doc(db, projectsFirebaseListRef, id));
     } catch (e) {
@@ -68,46 +83,55 @@ export const useProjects = () => {
     }
   };
 
-// Delete a task when complete
-const deleteTaskFromProject = async (projectId, taskId) => {
-  try {
-    // Ensure the correct path to the task
-    const taskDocRef = doc(db, projectsFirebaseListRef, projectId, 'taskHandling', taskId);
-    await deleteDoc(taskDocRef); // This should delete the document
-    console.log(`Task ${taskId} deleted from project ${projectId}`);
-  } catch (error) {
-    console.error("Error deleting task: ", error);
-    throw error; // You can rethrow the error if you want to handle it later
-  }
-};
+  const deleteTaskFromProject = async (projectId, taskId) => {
+    if (!user.value) {
+      error.value = 'User is not logged in';
+      return;
+    }
 
-  // Fetch projects and their tasks
-  onMounted(() => {
-    // Listen to changes in the projects collection
-    onSnapshot(projectsList, (snapshot) => {
+    try {
+      const taskDocRef = doc(db, projectsFirebaseListRef, projectId, 'taskHandling', taskId);
+      await deleteDoc(taskDocRef);
+      console.log(`Task ${taskId} deleted from project ${projectId}`);
+    } catch (e) {
+      console.error("Error deleting task: ", e);
+      error.value = 'Error deleting task';
+    }
+  };
+
+  // Fetching projects if loggedin
+  watch(isLoggedIn, (loggedIn) => {
+    if (!loggedIn || !user.value) {
+      projects.value = [];
+      return;
+    }
+
+    const userProjectsQuery = isAdmin.value
+      ? projectsList // Administrator can see all the projects, currently no filtering or designation of who made it
+      : query(projectsList, where('uid', '==', user.value.uid));
+
+    onSnapshot(userProjectsQuery, (snapshot) => {
       projects.value = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
-        tasks: [] // Initialize tasks array for each project
+        tasks: []
       }));
 
-      // Fetch tasks for each project
       projects.value.forEach(async (project) => {
         const taskHandlingRef = collection(db, projectsFirebaseListRef, project.id, 'taskHandling');
         
-        // Listen to changes in the tasks subcollection of each project
         onSnapshot(taskHandlingRef, (taskSnapshot) => {
           project.tasks = taskSnapshot.docs.map(taskDoc => ({
             id: taskDoc.id,
             ...taskDoc.data()
           }));
-        }, (error) => {
-          console.error('Error fetching tasks:', error);
+        }, (e) => {
+          console.error('Error fetching tasks:', e);
           error.value = 'Error fetching tasks';
         });
       });
-    }, (error) => {
-      console.error('Error fetching projects:', error);
+    }, (e) => {
+      console.error('Error fetching projects:', e);
       error.value = 'Error fetching projects';
     });
   });

@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch } from 'vue'
-import { useProjects } from '../modules/useProjects'
+import { useProjects } from '../modules/projectcreation/useProjects'
 
 const props = defineProps({
   projectId: [Number, String],

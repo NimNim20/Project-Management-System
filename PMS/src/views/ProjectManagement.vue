@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useProjects } from '../modules/useProjects';
+import { useProjects } from '../modules/projectcreation/useProjects';
 import navbarComponent from '../components/NavComponent.vue';
 
 const { projects, error, addProject, addTaskToProject, updateTaskInProject, deleteProject, deleteTaskFromProject } = useProjects();

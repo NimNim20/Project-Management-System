@@ -23,14 +23,14 @@ nav {
 
 nav a {
 
-  color:rgba(147, 51, 234, 1);
+  color:rgb(255, 255, 255);
   font-weight: 500;
   text-decoration: none;
   transition: color 0.3s ease, transform 0.3s ease;
 }
 
 nav a:hover {
-  color: rgba(255, 51, 234, 1);
+  color: rgb(184, 83, 174);
   transform: scale(1.1);
 }
 </style>

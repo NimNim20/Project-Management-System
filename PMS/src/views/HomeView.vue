@@ -1,9 +1,12 @@
 <script setup>
+import { useUsers } from '../modules/user/useUsers';
 import NavComponent from '../components/NavComponent.vue';
+
+const { isLoggedIn } = useUsers(); 
 </script>
 
 <template>
-  <main class="flex flex-col items-center justify-center min-h-screen bg-black text-orange-400">
+  <main class="flex flex-col items-center justify-center min-h-screen text-orange-400">
     <NavComponent />
 
     <!-- Hero Section -->
@@ -15,8 +18,13 @@ import NavComponent from '../components/NavComponent.vue';
         Manage your projects with ease, collaborate seamlessly, and boost productivity like never before... if you dare!
       </p>
       <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
-        <!-- Updated Button with Router Link -->
-        <router-link to="/login">
+        <!-- Conditional Button Based on Login Status -->
+        <router-link v-if="isLoggedIn" to="/projects">
+          <button class="px-6 py-3 rounded-lg bg-orange-600 text-white text-lg font-semibold hover:bg-orange-500 transition duration-300">
+            See Projects
+          </button>
+        </router-link>
+        <router-link v-else to="/login">
           <button class="px-6 py-3 rounded-lg bg-orange-600 text-white text-lg font-semibold hover:bg-orange-500 transition duration-300">
             Get Started
           </button>
@@ -27,5 +35,5 @@ import NavComponent from '../components/NavComponent.vue';
 </template>
 
 <style scoped>
-/* Add any additional Halloween-themed styles here */
+
 </style>

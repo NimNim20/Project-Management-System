@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
-import { useUsers } from '../modules/useUsers';
-import { useProjects } from '../modules/useProjects';
+import { useUsers } from '../modules/user/useUsers';
+import { useProjects } from '../modules/projectcreation/useProjects';
 
 const { user, login, logout, isLoggedIn, error } = useUsers();
 

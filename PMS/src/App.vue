@@ -1,18 +1,24 @@
 <script setup>
 import { RouterView } from 'vue-router'
 import { ref } from 'vue'
+import { useUsers } from './modules/user/useUsers'
+const { isLoggedIn, userEmail, logout } = useUsers();
 
-const isLoggedIn = ref(false)
-
+// Define a logout handler function
+const handleLogout = () => {
+  logout();
+};
 </script>
 
 <template>
   <div class="app-container">
     <header>
-
-
-      <!-- Only show Logout button when logged in -->
-      <button v-if="isLoggedIn" @click="handleLogout">Logout</button> 
+      <div v-if="isLoggedIn">
+        <!-- Display logged-in user's email -->
+        <p>Currently Logged in as: {{ userEmail }}</p>
+        <!-- Show Logout button -->
+      </div>
+      <p v-else>Not logged in</p>
     </header>
     <RouterView />
   </div>

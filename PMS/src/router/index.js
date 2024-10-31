@@ -3,7 +3,7 @@ import TodoView from '../views/ProjectManagement.vue'   // Import To-Do page
 import Home from '../views/HomeView.vue'       
 import Login from '../views/LoginView.vue'  
 import About from '../views/AboutView.vue'                
-import { auth } from '../modules/firebase'     // Firebase authentication instance
+import { auth } from '../modules/fbfile/firebase'     // Firebase authentication instance
 import ProjectManagement from '../views/ProjectManagement.vue'
 
 // Define routes for your app

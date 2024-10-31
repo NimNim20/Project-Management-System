@@ -3,7 +3,7 @@ import './assets/main.css';
 import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
-import { auth } from './modules/firebase'; // Import the initialized auth
+import { auth } from './modules/fbfile/firebase'; // Import the initialized auth
 
 import { onAuthStateChanged } from 'firebase/auth';
 

@@ -1,23 +1,30 @@
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { auth } from "./firebase.js";
+import { auth } from "../fbfile/firebase.js";
 import router from '/src/router/index.js'
-import { ref } from 'vue'
-// import { useProjects } from '../modules/useProjects'
+import { ref, computed } from 'vue'
+
+
+
 
 export const useUsers = () => {
     const user = ref(null);
-    const error = ref(null);  // Add a ref to track errors
-    const isLoggedIn =ref(false);
+    const error = ref(null);
+    const isLoggedIn = ref(false);
+
+    // Computed property to check if the user is an admin
+    const isAdmin = computed(() => user.value && user.value.email === 'admin@admin.com');
+
+    // Computed property to get the user's email
+    const userEmail = computed(() => user.value ? user.value.email : 'Guest');
 
     // Login function with error handling
     const login = async (email, password) => {
-        error.value = null;  // Clear any previous error
+        error.value = null;
         try {
             await signInWithEmailAndPassword(auth, email, password);
             isLoggedIn.value = true;
-            router.push('/');  // Redirect to home or another route after login
+            router.push('/');
         } catch (err) {
-            // Set the error message based on Firebase error
             if (err.code === 'auth/wrong-password') {
                 error.value = 'Incorrect password. Please try again.';
             } else if (err.code === 'auth/user-not-found') {
@@ -27,7 +34,7 @@ export const useUsers = () => {
             } else {
                 error.value = 'Login failed. Please try again later.';
             }
-            console.log(err.code);  // Log the error for debugging purposes
+            console.log(err.code);
         }
     }
 
@@ -36,33 +43,25 @@ export const useUsers = () => {
         try {
             await signOut(auth);
             isLoggedIn.value = false;
-            // user.value = null;
-            router.push('/');  // Redirect to home after logout
+            router.push('/');
         } catch (err) {
-            console.log(err.message);  // Log any logout errors
+            console.log(err.message);
         }
     }
-
-    // Admin login function
-// const handleLogin = async () => {
-//     await login('admin@admin.com', 'admin1')
-//     isLoggedIn.value = true
-//     if (user.value) {
-//         useProjects()  // Fetch projects after login
-//     }
-// }
 
     // Track authentication state changes
     onAuthStateChanged(auth, (currentUser) => {
         user.value = currentUser;
         isLoggedIn.value = !!currentUser;
-    })
+    });
 
     return {
         user,
         error,
         isLoggedIn,
         login,
-        logout
-    }
+        logout,
+        isAdmin,
+        userEmail  // Expose userEmail to be used in components
+    };
 }

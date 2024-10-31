@@ -1,43 +1,77 @@
-<script setup lang="ts">
+<script setup>
 import NavComponent from '@/components/NavComponent.vue';
 </script>
 
 <template>
   <NavComponent />
 
-  <section>
-      <h2 class="articleTitle text-center text-2xl font-bold mb-4">Makers of the Website</h2>
-        <article class="aboutMakers text-center">
-          <span class="bg-gradient-to-r from-yellow-400 to-pink-500 bg-clip-text text-transparent text-3xl font-semibold">
-             We are two students, Simon & Benjamin, who decided to take on a challenge for our Adv. JavaScript class.
-          </span>
-            <br />
-              <span class="text-white text-lg">We are two passionate students who are eager to learn and grow in the field of web development.</span>
-        </article>
-    </section>
+  <section class="makers-section">
+    <h2 class="section-title">Meet the Makers</h2>
+    <article class="makers-description">
+      <p class="intro">
+        We are <strong>Simon</strong> and <strong>Benjamin</strong>, two driven students tackling a project for our Advanced JavaScript class.
+      </p>
+      <p class="mission">
+        Our goal is to grow and learn in the field of web development while creating something valuable and impactful.
+      </p>
+    </article>
+  </section>
 </template>
 
-<style>
+<style scoped>
+.makers-section {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: #1c1f26; 
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
 
-.articleTitle{
+.makers-section:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 24px rgba(131, 131, 131, 0.2); 
+}
+
+
+.section-title {
   font-size: 2rem;
   font-weight: 700;
+  color: #f4f4f9;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  position: relative;
 }
 
-.aboutMakers{
-  font-size: 1.2rem;
-  font-weight: 500;
-  border-radius: 5px;
-}
-.articleTitle {
-  transition: background-image 1.5s ease-in-out;
+
+.section-title::after {
+  content: "";
+  display: block;
+  width: 50px;
+  height: 3px;
+  background-color: #ff6b6b; 
+  margin: 0.5rem auto 0;
 }
 
-.articleTitle:hover {
-  background-image: linear-gradient(90deg, #f6b93b, #b71540);
-  background-size: 100%;
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
+.makers-description {
+  text-align: center;
+  color: #d1d5db;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.intro strong {
+  color: #ff6b6b;
+}
+
+.section-title:hover {
+  color: #ff6b6b;
+  transition: color 0.3s ease;
+}
+
+.mission {
+  margin-top: 0.8rem;
+  color: #e5e7eb;
 }
 </style>
