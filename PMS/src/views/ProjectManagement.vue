@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue';
 import { useProjects } from '../modules/useProjects';
 import navbarComponent from '../components/NavComponent.vue';
 
-const { projects, error, addProject, addTaskToProject, updateTaskInProject, deleteProject } = useProjects();
+const { projects, error, addProject, addTaskToProject, updateTaskInProject, deleteProject, deleteTaskFromProject } = useProjects();
 
 const newProjectName = ref('');
 const newTask = ref({ text: '', assignedTo: '', priority: 'Normal', dueDate: '' });
@@ -12,6 +12,12 @@ const newTask = ref({ text: '', assignedTo: '', priority: 'Normal', dueDate: '' 
 const isModalVisible = ref(false);
 const confirmedProjectId = ref(null);
 const confirmedProjectTitle = ref(''); // New ref for project title
+
+// Task modal states
+const isTaskModalVisible = ref(false);
+const confirmedTaskId = ref(null);
+const confirmedTaskProjectId = ref(null);
+const confirmedTaskTitle = ref('');
 
 onMounted(() => {
   useProjects();
@@ -37,11 +43,32 @@ const handleDeleteProject = (id) => {
   closeModal(); // Close modal after deletion
 };
 
+// Show confirmation modal for task deletion
+const confirmDeleteTask = (task, projectId, title) => {
+  confirmedTaskId.value = task.id;
+  confirmedTaskProjectId.value = projectId;
+  confirmedTaskTitle.value = title;
+  isTaskModalVisible.value = true;
+};
+
+// Delete task after confirmation
+const handleDeleteTask = () => {
+  deleteTaskFromProject(confirmedTaskProjectId.value, confirmedTaskId.value);
+  closeTaskModal();
+};
+
 // Close modal
 const closeModal = () => {
   isModalVisible.value = false;
   confirmedProjectId.value = null; // Reset project ID
   confirmedProjectTitle.value = ''; // Reset project title
+};
+
+const closeTaskModal = () => {
+  isTaskModalVisible.value = false;
+  confirmedTaskId.value = null;
+  confirmedTaskProjectId.value = null;
+  confirmedTaskTitle.value = '';
 };
 
 const handleAddTask = (projectId) => {
@@ -150,6 +177,7 @@ const cancelEditing = () => {
                       <div class="status-indicator not-started"></div>
                     </div>
                     <button class="edit-task" @click="startEditingTask(task, project.id)">Edit</button>
+                    <button class="delete-task" @click="confirmDeleteTask(task, project.id, task.taskTitle)">Delete</button>
                   </div>
                 </li>
               </ul>
@@ -176,6 +204,7 @@ const cancelEditing = () => {
                       <div class="status-indicator in-progress"></div>
                     </div>
                     <button class="edit-task" @click="startEditingTask(task, project.id)">Edit</button>
+                    <button class="delete-task" @click="confirmDeleteTask(task, project.id, task.taskTitle)">Delete</button>
                   </div>
                 </li>
               </ul>
@@ -202,6 +231,7 @@ const cancelEditing = () => {
                       <div class="status-indicator completed"></div>
                     </div>
                     <button class="edit-task" @click="startEditingTask(task, project.id)">Edit</button>
+                    <button class="delete-task" @click="confirmDeleteTask(task, project.id, task.taskTitle)">Delete</button>
                   </div>
                 </li>
               </ul>
@@ -259,6 +289,18 @@ const cancelEditing = () => {
         </div>
       </div>
     </div>
+
+    <div v-if="isTaskModalVisible" class="modal">
+    <div class="modal-content">
+      <span class="close" @click="closeTaskModal">&times;</span>
+      <h2 class="text-neutral-950">Are you sure you want to delete this task "{{ confirmedTaskTitle }}"?</h2>
+      <p class="text-neutral-950">This action cannot be undone.</p>
+      <div class="confirmButtons">
+        <button class="greenBtn text-emerald-400" @click="handleDeleteTask">Yes</button>
+        <button class="redBtn text-rose-600" @click="closeTaskModal">Cancel</button>
+      </div>
+    </div>
+  </div>
   </div>
 </template>
 
@@ -321,6 +363,16 @@ const cancelEditing = () => {
   border-radius: 5px;
   padding: 0.5rem 1rem;
   margin-top: 10px;
+}
+
+.delete-task {
+  background-color: red;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  margin-top: 10px;
+  margin-left: 5px;
 }
 
 .completed {
