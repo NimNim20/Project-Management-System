@@ -17,6 +17,7 @@ const handleLogout = () => {
         <!-- Display logged-in user's email -->
         <p>Currently Logged in as: {{ userEmail }}</p>
         <!-- Show Logout button -->
+        <button @click="handleLogout">Logout</button>
       </div>
       <p v-else>Not logged in</p>
     </header>
