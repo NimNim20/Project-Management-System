@@ -87,7 +87,6 @@ const handleSaveTask = async () => {
     };
     try {
       await updateTaskInProject(String(editingTask.value.projectId), String(editingTask.value.id), updatedTask);
-      // Optionally refetch projects or update local state here
     } catch (error) {
       console.error('Error updating task:', error);
     } finally {
