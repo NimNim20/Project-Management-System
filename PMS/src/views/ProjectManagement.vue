@@ -6,44 +6,47 @@ import navbarComponent from '../components/NavComponent.vue';
 const { projects, error, addProject, addTaskToProject, updateTaskInProject, deleteProject } = useProjects();
 
 const newProjectName = ref('');
-const newTask = ref({ text: '', assignedTo: '', priority: 'Normal', dueDate: '' });
+const newTask = ref({ text: '', assignedTo: '', status: '', priority: 'Normal', dueDate: '' });
 
 // Modal states
 const isModalVisible = ref(false);
-const isAddTaskModalVisible = ref(false); // Controls Add Task modal visibility
+const isAddTaskModalVisible = ref(false);
 const confirmedProjectId = ref(null);
-const confirmedProjectTitle = ref(''); // New ref for project title
+const confirmedProjectTitle = ref('');
 
 onMounted(() => {
   useProjects();
 });
 
+const isAddingProject = ref(false);
+
 const handleAddProject = () => {
   if (newProjectName.value.trim()) {
     addProject(newProjectName.value.trim());
     newProjectName.value = '';
+    isAddingProject.value = false; // Close input after adding
   }
 };
 
 
 // Show confirmation modal
 const confirmDelete = (id, title) => {
-  confirmedProjectId.value = id; // Store project ID to delete
-  confirmedProjectTitle.value = title; // Store project title
-  isModalVisible.value = true; // Show modal
+  confirmedProjectId.value = id;
+  confirmedProjectTitle.value = title;
+  isModalVisible.value = true;
 };
 
 // Delete project after confirmation
 const handleDeleteProject = (id) => {
   deleteProject(id);
-  closeModal(); // Close modal after deletion
+  closeModal(); 
 };
 
 // Close modal
 const closeModal = () => {
   isModalVisible.value = false;
-  confirmedProjectId.value = null; // Reset project ID
-  confirmedProjectTitle.value = ''; // Reset project title
+  confirmedProjectId.value = null;
+  confirmedProjectTitle.value = '';
 };
 
 // Open Add Task Modal
@@ -115,6 +118,16 @@ const cancelEditing = () => {
   isEditing.value = false;
   editingTask.value = null;
 };
+
+const isProjectModalVisible = ref(false);
+
+const openProjectModal = () => {
+  isProjectModalVisible.value = true;
+};
+
+const closeProjectModal = () => {
+  isProjectModalVisible.value = false;
+};
 </script>
 
 <template>
@@ -125,28 +138,27 @@ const cancelEditing = () => {
   <div class="project-container">
     <h2 class="text-2xl text-orange-300 mb-3">Project Management</h2>
 
-    <!-- Add Project Form -->
     <button @click="openProjectModal" class="add-project-btn">Add Project</button>
 
 <!-- Modal for adding a project -->
-        <div v-if="isProjectModalVisible" class="modal2">
-          <div class="modal-content2">
-          <span class="close2" @click="closeProjectModal">&times;</span>
-          <h2>Add New Project</h2>
-          <form @submit.prevent="handleAddProject">
-          <input v-model="newProjectName" type="text" placeholder="Project Name" required class="large-input" />
-          <button type="submit" class="greenBtn2">Add</button>
-          </form>
-          </div>
-        </div>
+<div v-if="isProjectModalVisible" class="modal2">
+  <div class="modal-content2">
+    <span class="close2" @click="closeProjectModal">&times;</span>
+    <h2>Add New Project</h2>
+    <form @submit.prevent="handleAddProject">
+      <input v-model="newProjectName" type="text" placeholder="Project Name" required class="large-input" />
+      <button type="submit" class="greenBtn2">Add</button>
+    </form>
+  </div>
+</div>
 
     <p v-if="error" class="error">{{ error }}</p>
 
     <ul v-if="projects.length">
       <li v-for="project in projects" :key="project.id">
-        <h3>{{ project.projectTitle }}</h3>
+        <h3 class="flex justify-center text-4xl font-bold text-emerald-500">{{ project.projectTitle }}</h3>
         <button class="deleteProject" @click="confirmDelete(project.id, project.projectTitle)">Delete Project</button>
-        <button class="addTaskBtn" @click="openAddTaskModal(project.id)">Add Task</button>
+        <button class="addTaskBtn" @click="openAddTaskModal(project.id)">Add a new task!</button>
 
         <!-- Task List for each project -->
         <div class="task-list">
