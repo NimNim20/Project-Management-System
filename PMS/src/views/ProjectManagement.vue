@@ -62,19 +62,6 @@ const handleDeleteTask = () => {
   closeTaskModal();
 };
 
-// Show confirmation modal for task deletion
-const confirmDeleteTask = (task, projectId, title) => {
-  confirmedTaskId.value = task.id;
-  confirmedTaskProjectId.value = projectId;
-  confirmedTaskTitle.value = title;
-  isTaskModalVisible.value = true;
-};
-
-// Delete task after confirmation
-const handleDeleteTask = () => {
-  deleteTaskFromProject(confirmedTaskProjectId.value, confirmedTaskId.value);
-  closeTaskModal();
-};
 
 // Close modal
 const closeModal = () => {
@@ -102,12 +89,6 @@ const closeTaskModal = () => {
   confirmedTaskTitle.value = '';
 };
 
-const closeTaskModal = () => {
-  isTaskModalVisible.value = false;
-  confirmedTaskId.value = null;
-  confirmedTaskProjectId.value = null;
-  confirmedTaskTitle.value = '';
-};
 
 const handleAddTask = (projectId) => {
   if (newTask.value.text.trim()) {
@@ -296,7 +277,17 @@ const closeProjectModal = () => {
         </div>
 
         <p v-if="project.tasks.length === 0">No tasks yet!</p>
-
+        <form class="taskForm" @submit.prevent="handleAddTask(project.id)">
+          <input v-model="newTask.text" type="text" placeholder="Add a new task" required />
+          <input v-model="newTask.assignedTo" type="text" placeholder="Assigned to" />
+          <select class="taskPrio" v-model="newTask.priority">
+            <option value="Low">Low</option>
+            <option value="Normal">Normal</option>
+            <option value="High">High</option>
+          </select>
+          <input v-model="newTask.dueDate" type="date" />
+          <button class="addTask" type="submit">Add Task</button>
+        </form>
         <div v-if="isEditing" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
             <h3 class="text-lg font-semibold mb-4 text-gray-700">Edit Task</h3>
