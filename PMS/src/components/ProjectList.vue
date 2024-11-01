@@ -1,10 +1,9 @@
 <script setup>
-import { ref } from 'vue'
 
 const props = defineProps({
   projects: {
     type: Array,
-    default: () => [] // Sets default value of array to empty
+    default: () => [] 
   },
   selectedProjectId: {
     type: [Number, String],

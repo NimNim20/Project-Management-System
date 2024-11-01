@@ -11,10 +11,8 @@ export const useUsers = () => {
     const error = ref(null);
     const isLoggedIn = ref(false);
 
-    // Computed property to check if the user is an admin
     const isAdmin = computed(() => user.value && user.value.email === 'admin@admin.com');
 
-    // Computed property to get the user's email
     const userEmail = computed(() => user.value ? user.value.email : 'Guest');
 
     // Login function with error handling
@@ -62,6 +60,6 @@ export const useUsers = () => {
         login,
         logout,
         isAdmin,
-        userEmail  // Expose userEmail to be used in components
+        userEmail
     };
 }

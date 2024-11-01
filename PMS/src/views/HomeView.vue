@@ -18,6 +18,7 @@ const { isLoggedIn } = useUsers();
         Manage your projects with ease, collaborate seamlessly, and boost productivity like never before... if you dare!
       </p>
       <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+
         <!-- Conditional Button Based on Login Status -->
         <router-link v-if="isLoggedIn" to="/projects">
           <button class="px-6 py-3 rounded-lg bg-orange-600 text-white text-lg font-semibold hover:bg-orange-500 transition duration-300">
@@ -29,6 +30,7 @@ const { isLoggedIn } = useUsers();
             Get Started
           </button>
         </router-link>
+        
       </div>
     </section>
   </main>

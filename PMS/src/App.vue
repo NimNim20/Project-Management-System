@@ -3,7 +3,6 @@ import { RouterView } from 'vue-router'
 import { useUsers } from './modules/user/useUsers'
 const { isLoggedIn, userEmail, logout } = useUsers();
 
-// Define a logout handler function
 const handleLogout = () => {
   logout();
 };

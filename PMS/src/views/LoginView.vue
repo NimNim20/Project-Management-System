@@ -8,7 +8,6 @@ const { user, login, logout, isLoggedIn, error } = useUsers();
 const email = ref('');
 const password = ref('');
 
-// Handle the login process
 const handleLogin = async () => {
   try {
     await login(email.value, password.value);

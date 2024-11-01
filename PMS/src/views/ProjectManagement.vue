@@ -8,14 +8,17 @@ const { projects, error, addProject, addTaskToProject, updateTaskInProject, dele
 const newProjectName = ref('');
 const newTask = ref({ text: '', assignedTo: '', status: '', priority: 'Normal', dueDate: '' });
 
-// Modal states
+// Modal and state controls
 const isModalVisible = ref(false);
 const isAddTaskModalVisible = ref(false);
-const confirmedProjectId = ref(null);
-const confirmedProjectTitle = ref(''); // New ref for project title
-
-// Task modal states
+const isProjectModalVisible = ref(false);
 const isTaskModalVisible = ref(false);
+const isEditing = ref(false);
+const editingTask = ref(null);
+
+// Modal state for confirming deletion
+const confirmedProjectId = ref(null);
+const confirmedProjectTitle = ref('');
 const confirmedTaskId = ref(null);
 const confirmedTaskProjectId = ref(null);
 const confirmedTaskTitle = ref('');
@@ -24,31 +27,28 @@ onMounted(() => {
   useProjects();
 });
 
-const isAddingProject = ref(false);
-
 const handleAddProject = () => {
   if (newProjectName.value.trim()) {
     addProject(newProjectName.value.trim());
     newProjectName.value = '';
-    isAddingProject.value = false; // Close input after adding
+    isProjectModalVisible.value = false;
   }
 };
 
+// Modal controls
+const openProjectModal = () => { isProjectModalVisible.value = true; };
+const closeProjectModal = () => { isProjectModalVisible.value = false; };
+const openAddTaskModal = (projectId) => { confirmedProjectId.value = projectId; isAddTaskModalVisible.value = true; };
+const closeAddTaskModal = () => { isAddTaskModalVisible.value = false; confirmedProjectId.value = null; };
+const closeModal = () => { isModalVisible.value = false; confirmedProjectId.value = null; confirmedProjectTitle.value = ''; };
+const closeTaskModal = () => { isTaskModalVisible.value = false; confirmedTaskId.value = null; confirmedTaskProjectId.value = null; confirmedTaskTitle.value = ''; };
 
-// Show confirmation modal
 const confirmDelete = (id, title) => {
   confirmedProjectId.value = id;
   confirmedProjectTitle.value = title;
   isModalVisible.value = true;
 };
 
-// Delete project after confirmation
-const handleDeleteProject = (id) => {
-  deleteProject(id);
-  closeModal(); 
-};
-
-// Show confirmation modal for task deletion
 const confirmDeleteTask = (task, projectId, title) => {
   confirmedTaskId.value = task.id;
   confirmedTaskProjectId.value = projectId;
@@ -56,45 +56,21 @@ const confirmDeleteTask = (task, projectId, title) => {
   isTaskModalVisible.value = true;
 };
 
-// Delete task after confirmation
+const handleDeleteProject = (id) => {
+  deleteProject(id);
+  closeModal();
+};
+
 const handleDeleteTask = () => {
   deleteTaskFromProject(confirmedTaskProjectId.value, confirmedTaskId.value);
   closeTaskModal();
 };
 
-
-// Close modal
-const closeModal = () => {
-  isModalVisible.value = false;
-  confirmedProjectId.value = null;
-  confirmedProjectTitle.value = '';
-};
-
-// Open Add Task Modal
-const openAddTaskModal = (projectId) => {
-  confirmedProjectId.value = projectId; // Set the project ID for the task
-  isAddTaskModalVisible.value = true; // Show add task modal
-};
-
-// Close Add Task Modal
-const closeAddTaskModal = () => {
-  isAddTaskModalVisible.value = false; // Hide modal
-  confirmedProjectId.value = null; // Reset project ID
-};
-
-const closeTaskModal = () => {
-  isTaskModalVisible.value = false;
-  confirmedTaskId.value = null;
-  confirmedTaskProjectId.value = null;
-  confirmedTaskTitle.value = '';
-};
-
-
 const handleAddTask = (projectId) => {
   if (newTask.value.text.trim()) {
     addTaskToProject(projectId, newTask.value);
     newTask.value = { text: '', assignedTo: '', priority: 'Normal', dueDate: '' };
-    closeAddTaskModal(); // Close modal after adding task
+    closeAddTaskModal();
   }
 };
 
@@ -102,26 +78,11 @@ const handleToggleComplete = (projectId, task, newStatus) => {
   updateTaskInProject(projectId, task.id, { status: newStatus });
 };
 
-// Function to sort tasks by priority
-const sortedTasks = (tasks, status) => {
-  return tasks
-    .filter(task => task.status === status)
-    .sort((a, b) => {
-      const priorityOrder = { High: 1, Normal: 2, Low: 3 };
-      return priorityOrder[a.priority] - priorityOrder[b.priority];
-    });
-};
-
-const isEditing = ref(false); // Track if we are in edit mode
-const editingTask = ref(null); // Store the task being edited
-
-// Start editing a task
 const startEditingTask = (task, projectId) => {
   isEditing.value = true;
-  editingTask.value = { ...task, projectId }; // Include projectId for conditional check
+  editingTask.value = { ...task, projectId };
 };
 
-// Save edited task
 const handleSaveTask = async () => {
   if (editingTask.value) {
     const updatedTask = {
@@ -129,7 +90,7 @@ const handleSaveTask = async () => {
       assignedTo: editingTask.value.assignedTo,
       priority: editingTask.value.priority,
       dueDate: editingTask.value.dueDate,
-      status: editingTask.value.status
+      status: editingTask.value.status,
     };
     try {
       await updateTaskInProject(String(editingTask.value.projectId), String(editingTask.value.id), updatedTask);
@@ -142,20 +103,17 @@ const handleSaveTask = async () => {
   }
 };
 
-// Cancel editing
 const cancelEditing = () => {
   isEditing.value = false;
   editingTask.value = null;
 };
 
-const isProjectModalVisible = ref(false);
-
-const openProjectModal = () => {
-  isProjectModalVisible.value = true;
-};
-
-const closeProjectModal = () => {
-  isProjectModalVisible.value = false;
+// Sorting tasks by priority
+const sortedTasks = (tasks, status) => {
+  const priorityOrder = { High: 1, Normal: 2, Low: 3 };
+  return tasks
+    .filter(task => task.status === status)
+    .sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
 };
 </script>
 
@@ -180,7 +138,6 @@ const closeProjectModal = () => {
     </form>
   </div>
 </div>
-
 
     <p v-if="error" class="error">{{ error }}</p>
 
@@ -295,7 +252,6 @@ const closeProjectModal = () => {
           </div>
         </div>
 
-        
         <div v-if="isEditing" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
             <h3 class="text-lg font-semibold mb-4 text-gray-700">Edit Task</h3>
@@ -346,9 +302,7 @@ const closeProjectModal = () => {
   </div>
 </template>
 
-
 <style>
-
 .add-project-btn {
   padding: 10px 20px;
   font-size: 1rem;

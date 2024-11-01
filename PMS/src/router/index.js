@@ -1,12 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import TodoView from '../views/ProjectManagement.vue'   // Import To-Do page
+import TodoView from '../views/ProjectManagement.vue'   
 import Home from '../views/HomeView.vue'       
 import Login from '../views/LoginView.vue'  
 import About from '../views/AboutView.vue'                
-import { auth } from '../modules/fbfile/firebase'     // Firebase authentication instance
+import { auth } from '../modules/fbfile/firebase'     
 import ProjectManagement from '../views/ProjectManagement.vue'
 
-// Define routes for your app
+
 const routes = [
   {
     path: '/',
@@ -34,7 +34,7 @@ const routes = [
   },
 ]
 
-// Create router instance
+
 const router = createRouter({
   history: createWebHistory(),
   routes
