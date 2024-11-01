@@ -1,6 +1,5 @@
 <script setup>
 import { RouterView } from 'vue-router'
-import { ref } from 'vue'
 import { useUsers } from './modules/user/useUsers'
 const { isLoggedIn, userEmail, logout } = useUsers();
 

@@ -12,7 +12,7 @@ const { isLoggedIn } = useUsers();
     <!-- Hero Section -->
     <section class="w-full max-w-4xl text-center p-8">
       <h1 class="text-4xl md:text-5xl font-bold text-purple-600 mb-6">
-        🎃 Welcome to PMS - Project Management System 👻
+        🎃 Welcome to NexTask - A Project Management System 👻
       </h1>
       <p class="text-lg md:text-xl text-gray-300 mb-8">
         Manage your projects with ease, collaborate seamlessly, and boost productivity like never before... if you dare!
