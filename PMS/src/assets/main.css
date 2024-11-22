@@ -1,7 +1,7 @@
 @import './base.css';
 @import './style.css';
 body {
-  color: #f9f9f9; 
+  color: #000000; 
   font-family: 'Arial', sans-serif;
   display: flex;
   justify-content: center;
