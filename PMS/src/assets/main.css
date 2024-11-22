@@ -1,7 +1,8 @@
 @import './base.css';
 @import './style.css';
 body {
-  color: #000000; 
+  background-color: black;
+  color: #fff;
   font-family: 'Arial', sans-serif;
   display: flex;
   justify-content: center;
